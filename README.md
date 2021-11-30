@@ -5,9 +5,6 @@ Avtor: Ian Lampič
 
 Repozitorij z gradivi pri predmetu APPR v študijskem letu 2020/21
 
-* Shiny Shiny
-* RStudio RStudio
-
 ## Tematika
 
 Za projektno nalogo bom analiziral zdravstevno stanje v različnih državah. Med državami bom primerjal 
