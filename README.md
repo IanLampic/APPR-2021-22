@@ -1,11 +1,21 @@
 # Analiza podatkov s programom R - 2021/22
 
+<<<<<<< HEAD
 Avtor: Ian Lampič
 
 Repozitorij z gradivi pri predmetu APPR v študijskem letu 2021/22
 
 ## Tematika
 
+=======
+
+Avtor: Ian Lampič
+
+Repozitorij z gradivi pri predmetu APPR v študijskem letu 2021/22
+
+## Tematika
+
+>>>>>>> 3d86834fbd756d86b0c00873a4b1e3b65cf4a71b
 Za projektno nalogo bom analiziral zdravstevno stanje v različnih državah in v EU. Primerjal bom 
 podatke o potrošnji za bolnice, umobolnice, zobozdravstvene ordinacije in lekarne (podatki so izraženi v milijon evrih) v različnih državah. 
 Nato bom te podatke primerjal z analizo povprečne starosti glede na spol (podatki so predstavljeni v letih).
