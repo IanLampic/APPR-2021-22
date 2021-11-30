@@ -1,6 +1,6 @@
 # Analiza podatkov s programom R - 2021/22
 
-## Ideja
+## Tematika
 
 Za projektno nalogo bom analiziral zdravstevno stanje v različnih državah. Med državami bom primerjal 
 podatke o potrošnji za bolnice, umobolnice, zobozdravstvene ordinacije in lekarne (podatki so izraženi v milijon evrih). 
