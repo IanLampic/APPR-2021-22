@@ -12,7 +12,7 @@ Nato bom te podatke primerjal z analizo povprečne starosti glede na spol (podat
 Na koncu bom poskusil še poiskati korelacijo z zadnjimi podatki in sicer razlogi za smrt, kot so okužbe, bolezni dihal, živčevja, mišic, skeleta, dihal pa vse do duševnih bolezni. S korelacijo teh podatkov bom tako lahko ocenil zdravstveno stanje v dani državi, 
 s tem pa tudi lahko sklepal o sami razvitosti le-te.
 
-## Viri 
+## Viri  
 
 Za analizo bom uporabil podatke iz [Eurostat](https://ec.europa.eu). 
 
