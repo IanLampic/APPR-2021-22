@@ -3,14 +3,14 @@
 
 Avtor: Ian Lampič
 
-Repozitorij z gradivi pri predmetu APPR v študijskem letu 2020/21
+Repozitorij z gradivi pri predmetu APPR v študijskem letu 2021/22
 
 ## Tematika
 
-Za projektno nalogo bom analiziral zdravstevno stanje v različnih državah. Med državami bom primerjal 
-podatke o potrošnji za bolnice, umobolnice, zobozdravstvene ordinacije in lekarne (podatki so izraženi v milijon evrih). 
-Nato bom te podatke primerjal z analizo povprečne starosti po državah glede na spol (podatki so predstavljeni v letih).
-Na koncu bom poiskusil še poiskati korelacijo z zadnjimi podatki in sicer razlogi za smrt, kot so okužbe, bolezni dihal, živčevja, mišic, skeleta, dihal pa vse do duševnih bolezni. S korelacijo teh podatkov bom tako lahko ocenil zdravstveno stanje v dani državi, 
+Za projektno nalogo bom analiziral zdravstevno stanje v različnih državah in v EU. Primerjal bom 
+podatke o potrošnji za bolnice, umobolnice, zobozdravstvene ordinacije in lekarne (podatki so izraženi v milijon evrih) v različnih državah. 
+Nato bom te podatke primerjal z analizo povprečne starosti glede na spol (podatki so predstavljeni v letih).
+Na koncu bom poskusil še poiskati korelacijo z zadnjimi podatki in sicer razlogi za smrt, kot so okužbe, bolezni dihal, živčevja, mišic, skeleta, dihal pa vse do duševnih bolezni. S korelacijo teh podatkov bom tako lahko ocenil zdravstveno stanje v dani državi, 
 s tem pa tudi lahko sklepal o sami razvitosti le-te.
 
 ## Viri
