@@ -32,7 +32,7 @@ Ko ga prevedemo, se izvedejo programi, ki ustrezajo drugi, tretji in četrti faz
 
 * obdelava, uvoz in čiščenje podatkov: `uvoz/uvoz.r`
 * analiza in vizualizacija podatkov: `vizualizacija/vizualizacija.r`
-* napredna analiza podatkov: `analiza/analiza.r`
+* napredna analiza podatkov: `analiza/analiza.r` 
 
 Vnaprej pripravljene funkcije se nahajajo v datotekah v mapi `lib/`.
 Potrebne knjižnice so v datoteki `lib/libraries.r`
