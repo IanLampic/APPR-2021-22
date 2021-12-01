@@ -9,20 +9,20 @@ Repozitorij z gradivi pri predmetu APPR v študijskem letu 2021/22
 Za projektno nalogo bom analiziral zdravstevno stanje v različnih državah in v EU. Primerjal bom 
 podatke o potrošnji za bolnice, umobolnice, zobozdravstvene ordinacije in lekarne (podatki so izraženi v milijon evrih) v različnih državah. 
 Nato bom te podatke primerjal z analizo povprečne starosti ljudi, dokler so še zmeraj zdravi, glede na spol (podatki so predstavljeni v letih).
-Na koncu bom poskusil še poiskati korelacijo z zadnjimi podatki in sicer razlogi za smrt, kot so okužbe, bolezni dihal, živčevja, mišic, skeleta, dihal pa vse do duševnih bolezni. S korelacijo teh podatkov bom tako lahko ocenil zdravstveno stanje v dani državi, 
-s tem pa tudi lahko sklepal o sami razvitosti le-te.
+Na koncu bom poskusil še poiskati povezavo z razlogi za smrt, kot so okužbe, bolezni dihal, živčevja, mišic, skeleta, dihal pa vse do duševnih bolezni in zračunal procent smrtnosti glede na število prebivalstva v posamezni državi. S korelacijo teh podatkov bom tako lahko ocenil zdravstveno stanje v dani državi, s tem pa tudi lahko sklepal o sami razvitosti le-te.
 
 ## Viri  
 
 Za analizo bom uporabil podatke iz [Eurostat](https://ec.europa.eu). 
 
-Viri imajo podatke v obliki CSV.
+Vsi viri imajo podatke v obliki CSV, razen število prebivalstva, ki pa ima obliko TSV.
 
 ## Tabele
 
 * Smrt v državah glede na vzrok (atributi po stolpcih so leto, država, enota, vzrok, rezidenti, spol, število smrti)
 * Povprečna starost zdravega življenja v državah (atributi po stolpcih so leto, država, enota, spol, povprečno leto ljudi)
 * Državna potrošnja za zdravstvene institucije (atributi po stolpcih so leto, država, enota, vrsta institucije, vrednost potrošnje)
+* Število prebivalstva (atributi so država(character) in leto(integer))
 
 
 ## Program
