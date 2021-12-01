@@ -22,7 +22,7 @@ s tem pa tudi lahko sklepal o sami razvitosti le-te.
 
 Za analizo bom uporabil podatke iz [Eurostat](https://ec.europa.eu). 
 
-Viri imajo podatke v obliki CSV.
+Vsi viri imajo podatke v obliki CSV, razen število prebivalstva, ki pa ima obliko TSV.
 
 ## Tabele
 
