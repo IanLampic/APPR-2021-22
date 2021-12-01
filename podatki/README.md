@@ -14,7 +14,7 @@ s tem pa tudi lahko sklepal o sami razvitosti le-te.
 
 ## Viri  
 
-Za analizo bom uporabil podatke iz [Eurostat](https://ec.europa.eu). 
+Za analizo bom uporabil podatke iz [Eurostat](https://ec.europa.eu/eurostat). 
 
 Viri imajo podatke v obliki CSV.
 
