@@ -13,7 +13,7 @@ Na koncu bom poskusil še poiskati povezavo z razlogi za smrt, kot so okužbe, b
 
 ## Viri  
 
-Za analizo bom uporabil podatke iz [Eurostat](https://ec.europa.eu). 
+Za analizo bom uporabil podatke iz [Eurostat](https://ec.europa.eu/eurostat). 
 
 Vsi viri imajo podatke v obliki CSV, razen število prebivalstva, ki pa ima obliko TSV.
 
@@ -23,7 +23,6 @@ Vsi viri imajo podatke v obliki CSV, razen število prebivalstva, ki pa ima obli
 * Povprečna starost zdravega življenja v državah (atributi po stolpcih so leto, država, enota, spol, povprečno leto ljudi)
 * Državna potrošnja za zdravstvene institucije (atributi po stolpcih so leto, država, enota, vrsta institucije, vrednost potrošnje)
 * Število prebivalstva (atributi so država(character) in leto(integer))
-
 
 ## Program
 
