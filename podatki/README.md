@@ -19,9 +19,9 @@ Vsi viri imajo podatke v obliki CSV, razen število prebivalstva, ki pa ima obli
 
 ## Tabele
 
-* Smrt v državah glede na vzrok (atributi po stolpcih so leto, država, enota, vzrok, rezidenti, spol, število smrti)
-* Povprečna starost zdravega življenja v državah (atributi po stolpcih so leto, država, enota, spol, povprečno leto ljudi)
-* Državna potrošnja za zdravstvene institucije (atributi po stolpcih so leto, država, enota, vrsta institucije, vrednost potrošnje)
+* Smrt v državah glede na vzrok (atributi po stolpcih so leto(integer), država(character), enota(, vzrok(character), rezidenti(character), spol(character), število smrti(integer))
+* Povprečna starost zdravega življenja v državah (atributi po stolpcih so leto(integer), država(character), enota, spol(character), povprečno leto starosti(double))
+* Državna potrošnja za zdravstvene institucije (atributi po stolpcih so leto(integer), država(character), enota, vrsta institucije(character), vrednost potrošnje(double))
 * Število prebivalstva (atributi so država(character) in leto(integer))
 
 ## Program
