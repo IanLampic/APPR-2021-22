@@ -6,12 +6,6 @@ Repozitorij z gradivi pri predmetu APPR v študijskem letu 2021/22
 
 ## Tematika
 
-Avtor: Ian Lampič
-
-Repozitorij z gradivi pri predmetu APPR v študijskem letu 2021/22
-
-## Tematika
-
 Za projektno nalogo bom analiziral zdravstevno stanje v različnih državah in v EU. Primerjal bom 
 podatke o potrošnji za bolnice, umobolnice, zobozdravstvene ordinacije in lekarne (podatki so izraženi v milijon evrih) v različnih državah. 
 Nato bom te podatke primerjal z analizo povprečne starosti, dokler so še zmeraj zdravi, glede na spol (podatki so predstavljeni v letih).
