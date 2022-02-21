@@ -6,4 +6,5 @@ Zdrava <- read_csv("podatki/Zdravaleta/podatki2.csv", na=",", locale=locale(enco
 Potrosnja <- read_csv("podatki/Potrošnja/podatki3.csv", na=",", locale=locale(encoding="Windows-1250"))
 Prebivalstvo <- read_tsv("podatki/število_prabivalstva.tsv", na=" ", locale=locale(encoding="Windows-1250"))
 
+print(Vzroki)
 #Ugotovit, katere države so pri prebivalstvu, končnice 
