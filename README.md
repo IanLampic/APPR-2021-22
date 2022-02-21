@@ -7,8 +7,7 @@ Repozitorij z gradivi pri predmetu APPR v študijskem letu 2021/22
 ## Tematika
 
 Za projektno nalogo bom analiziral zdravstevno stanje v različnih državah in v EU. Primerjal bom 
-podatke o potrošnji za bolnice, umobolnice, zobozdravstvene ordinacije in lekarne (podatki so izraženi v milijon evrih) v različnih državah. 
-Nato bom te podatke primerjal z analizo povprečne starosti, dokler so še zmeraj zdravi, glede na spol (podatki so predstavljeni v letih).
+podatke o analizi povprečne starosti, dokler so še zmeraj zdravi, glede na spol (podatki so predstavljeni v letih). Nato bom te podatke primerjal s številom pojstel glede na državo in pa poiskusil poiskati še korelacijo z številom nesreč v službi, kjer so podatki dani kot število ljudi, ki zaradi nesreče ne pridejo v službo 4 ali več dni ali pa se smrtno ponesrečijo.
 Na koncu bom poskusil še poiskati korelacijo z zadnjimi podatki in sicer razlogi za smrt, kot so okužbe, bolezni dihal, živčevja, mišic, skeleta, dihal pa vse do duševnih bolezni. S korelacijo teh podatkov bom tako lahko ocenil zdravstveno stanje v dani državi, 
 s tem pa tudi lahko sklepal o sami razvitosti le-te.
 
@@ -16,14 +15,15 @@ s tem pa tudi lahko sklepal o sami razvitosti le-te.
 
 Za analizo bom uporabil podatke iz [Eurostat](https://ec.europa.eu). 
 
-Vsi viri imajo podatke v obliki CSV, razen število prebivalstva, ki pa ima obliko TSV.
+Vsi viri imajo podatke v obliki CSV, razen število prebivalstva, ima obliko html in število postelj, ki ima oblika TSV.
 
 ## Tabele
 
 * Smrt v državah glede na vzrok (atributi po stolpcih so leto(integer), država(character), enota(, vzrok(character), rezidenti(character), spol(character), število smrti(integer))
 * Povprečna starost zdravega življenja v državah (atributi po stolpcih so leto(integer), država(character), enota, spol(character), povprečno leto starosti(double))
-* Državna potrošnja za zdravstvene institucije (atributi po stolpcih so leto(integer), država(character), enota, vrsta institucije(character), vrednost potrošnje(double))
-* Število prebivalstva (atributi so država(character) in leto(integer))
+* Število postelj v bolnicah (atributi so stolpcih država(character) in leta(integer))
+* Število prebivalstva (atributi so država(character), leto(integer) in število prebivalstca(integer))
+* Nesreče v službah (atributi so država(character) in leta (država))
 
 
 ## Program
