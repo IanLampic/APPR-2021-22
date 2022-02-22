@@ -6,6 +6,8 @@ library(tmap)
 library(shiny)
 library(readr)
 library(dplyr)
+library(httr)
+library(XML)
 options(gsubfn.engine="R")
 
 # Uvozimo funkcije za pobiranje in uvoz zemljevida.

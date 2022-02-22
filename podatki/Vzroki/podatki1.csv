@@ -1,4 +1,4 @@
-"TIME","GEO","UNIT","ICD10","AGE","RESID","SEX","Value","Flag and Footnotes"
+"TIME","GEO","UNIT","ICD10","AGE","RESID","SEX","Value","FlagandFootnotes"
 "2011","European Union - 28 countries (2013-2020)","Number","Certain infectious and parasitic diseases (A00-B99)","Total","All deaths reported in the country","Total","73,737",""
 "2011","European Union - 28 countries (2013-2020)","Number","Certain infectious and parasitic diseases (A00-B99)","Total","All deaths reported in the country","Males","36,148",""
 "2011","European Union - 28 countries (2013-2020)","Number","Certain infectious and parasitic diseases (A00-B99)","Total","All deaths reported in the country","Females","37,588",""
