@@ -11,9 +11,10 @@ Vzroki <- read_csv("podatki/Vzroki/podatki1.csv", na=",", locale=locale(encoding
 
 Vzroki <- Vzroki %>% relocate(obmocje = GEO, leto = TIME, vzrok = ICD10, spol = SEX, stevilo.prebivalcev = Value)
 
-Vzroki <- Vzroki[!grepl('Serbia', Vzroki$obmocje),]
+Vzroki <- Vzroki[!grepl('Serbia', Vzroki$obmocje),] 
 Vzroki <- Vzroki[!grepl('Turkey', Vzroki$obmocje),]
-Vzroki <- Vzroki[!grepl('France (metropolitan)', Vzroki$obmocje),]
+Vzroki <- Vzroki[!grepl('France (metropolitan)', Vzroki$obmocje),] 
+# Ne vem zakaj noče odstrant France (metropolitana)...
 
 Vzroki$spol[Vzroki$spol == "Total"] <- "Skupaj"
 Vzroki$spol[Vzroki$spol == "Males"] <- "Moški"
@@ -42,7 +43,6 @@ Prebivalstvo <- read_csv("podatki/Populacijan/populacija.csv", na=" ", locale=lo
 
 Prebivalstvo <- Prebivalstvo %>% relocate(obmocje = GEO, leto = TIME, spol = INDIC_DE, stevilo.prebivalcev = Value)
 
-Prebivalstvo <- Prebivalstvo[!grepl('Liechtenstein', Prebivalstvo$obmocje),]
 Prebivalstvo <- Prebivalstvo[!grepl('Germany including former GDR', Prebivalstvo$obmocje),]
 Prebivalstvo <- Prebivalstvo[!grepl('European Economic Area (EU28 - 2013-2020 and IS, LI, NO)', Prebivalstvo$obmocje),]
 Prebivalstvo <- Prebivalstvo[!grepl('European Economic Area (EU27 - 2007-2013 and IS, LI, NO)', Prebivalstvo$obmocje),]
