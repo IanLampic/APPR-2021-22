@@ -8,6 +8,7 @@ library(readr)
 library(dplyr)
 library(httr)
 library(XML)
+library(stringr)
 options(gsubfn.engine="R")
 
 # Uvozimo funkcije za pobiranje in uvoz zemljevida.

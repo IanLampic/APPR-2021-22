@@ -1,8 +1,8 @@
-"DATASET: Population on 1 January by age and sex [demo_pjan]"
+"DATASET: Population change - Demographic balance and crude rates at national level [demo_gind]"
 
-"LAST UPDATE: 05.07.21 16:35:11"
+"LAST UPDATE: 05.07.21 17:10:15"
 
-"EXTRACTION DATE: 21.02.22 19:36:34"
+"EXTRACTION DATE: 23.02.22 09:45:54"
 
 "SOURCE OF DATA: Eurostat"
 
@@ -76,14 +76,10 @@
 "Azerbaijan"
 "Georgia"
 
-"AGE"
-"Total"
-
-"SEX"
-"Total"
-
-"UNIT"
-"Number"
+"INDIC_DE"
+"Average population - total"
+"Average population - females"
+"Average population - males"
 
 "No footnotes available"
 
