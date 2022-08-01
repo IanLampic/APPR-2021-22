@@ -11,10 +11,10 @@ Vzroki <- read_csv("podatki/Vzroki/podatki1.csv", na=",", locale=locale(encoding
 
 Vzroki <- Vzroki %>% relocate(obmocje = GEO, leto = TIME, vzrok = ICD10, spol = SEX, stevilo.prebivalcev = Value)
 
+Vzroki <- Vzroki[!grepl('metropolitan', Vzroki$obmocje),] 
 Vzroki <- Vzroki[!grepl('Serbia', Vzroki$obmocje),] 
 Vzroki <- Vzroki[!grepl('Turkey', Vzroki$obmocje),]
-Vzroki <- Vzroki[!grepl('France (metropolitan)', Vzroki$obmocje),] 
-# Ne vem zakaj noče odstrant France (metropolitana)...
+
 
 Vzroki$spol[Vzroki$spol == "Total"] <- "Skupaj"
 Vzroki$spol[Vzroki$spol == "Males"] <- "Moški"
@@ -44,7 +44,7 @@ Prebivalstvo <- read_csv("podatki/Populacijan/populacija.csv", na=" ", locale=lo
 Prebivalstvo <- Prebivalstvo %>% relocate(obmocje = GEO, leto = TIME, spol = INDIC_DE, stevilo.prebivalcev = Value)
 
 Prebivalstvo <- Prebivalstvo[!grepl('Germany including former GDR', Prebivalstvo$obmocje),]
-Prebivalstvo <- Prebivalstvo[!grepl('European Economic Area (EU28 - 2013-2020 and IS, LI, NO)', Prebivalstvo$obmocje),]
+Prebivalstvo <- Prebivalstvo[!grepl('Economic', Prebivalstvo$obmocje),]
 Prebivalstvo <- Prebivalstvo[!grepl('European Economic Area (EU27 - 2007-2013 and IS, LI, NO)', Prebivalstvo$obmocje),]
 Prebivalstvo <- Prebivalstvo[!grepl('European Free Trade Association', Prebivalstvo$obmocje),]
 Prebivalstvo <- Prebivalstvo[!grepl('European Free Trade Association', Prebivalstvo$obmocje),]
@@ -56,7 +56,7 @@ Prebivalstvo <- Prebivalstvo[!grepl("Turkey", Prebivalstvo$obmocje),]
 Prebivalstvo <- Prebivalstvo[!grepl("Andorra", Prebivalstvo$obmocje),]
 Prebivalstvo <- Prebivalstvo[!grepl("Belarus", Prebivalstvo$obmocje),]
 Prebivalstvo <- Prebivalstvo[!grepl("Bosnia and Herzegovina", Prebivalstvo$obmocje),]
-Prebivalstvo <- Prebivalstvo[!grepl("Kosovo (under United Nations Security Council Resolution 1244/99)", Prebivalstvo$obmocje),]
+Prebivalstvo <- Prebivalstvo[!grepl("Kosovo", Prebivalstvo$obmocje),]
 Prebivalstvo <- Prebivalstvo[!grepl("Moldova", Prebivalstvo$obmocje),]
 Prebivalstvo <- Prebivalstvo[!grepl("Monaco", Prebivalstvo$obmocje),]
 Prebivalstvo <- Prebivalstvo[!grepl("Russia", Prebivalstvo$obmocje),]
@@ -70,48 +70,161 @@ Prebivalstvo$spol[Prebivalstvo$spol == "Average population - total"] <- "Skupaj"
 Prebivalstvo$spol[Prebivalstvo$spol == "Average population - males"] <- "Moški"
 Prebivalstvo$spol[Prebivalstvo$spol == "Average population - females"] <- "Ženske"
 
-# Naredi 3 tabele za vzroke (skupau, moški, ženske) jih združi z populacijo in na koncu skupaj
-
-Vzrokis <-Vzroki %>% filter(grepl("Skupaj", spol))
+Vzrokis <-Vzroki %>% filter(grepl("Skupaj", spol)) 
 Vzrokiz <-Vzroki %>% filter(grepl("Ženske", spol))
 Vzrokim <-Vzroki %>% filter(grepl("Moški", spol))
 
 Prebivalstvos <- Prebivalstvo %>% filter(grepl("Skupaj", spol))
+Prebivalstvoz <- Prebivalstvo %>% filter(grepl("Ženske", spol))
+Prebivalstvom <- Prebivalstvo %>% filter(grepl("Moški", spol))
+
+Novas <- left_join(Vzrokis, Prebivalstvos, by=c("obmocje", "leto"))
+Novaz <- left_join(Vzrokiz, Prebivalstvoz, by=c("obmocje", "leto"))
+Novam <- left_join(Vzrokim, Prebivalstvom, by=c("obmocje", "leto"))
+
+Novas <- subset (Novas, select = -spol.y)
+Novas <- Novas %>% relocate(leto = leto, obmocje = obmocje, spol = spol.x, vzrok = vzrok,  ljudje.z.boleznijo = stevilo.prebivalcev.x, stevilo.prebivalcev = stevilo.prebivalcev.y)
+Novaz <- subset (Novaz, select = -spol.y)
+Novaz <- Novaz %>% relocate(leto = leto, obmocje = obmocje, spol = spol.x, vzrok = vzrok, ljudje.z.boleznijo = stevilo.prebivalcev.x, stevilo.prebivalcev = stevilo.prebivalcev.y)
+Novam <- subset (Novam, select = -spol.y)
+Novam <- Novam %>% relocate(leto = leto, obmocje = obmocje, spol = spol.x, vzrok = vzrok, ljudje.z.boleznijo = stevilo.prebivalcev.x, stevilo.prebivalcev = stevilo.prebivalcev.y)
+
+Skupaj <- rbind(Novas, Novaz, Novam)
+#Odloči se kako bi sploh imel tabele, trenutno imaš združeno Vzroki in Prebivalstvo po spolu in skupno
+
+Skupaj$obmocje[Skupaj$obmocje == "European Union - 28 countries (2013-2020)"] <- "Evropska unija"
+Skupaj$obmocje[Skupaj$obmocje == "Belgium"] <- "Belgija"
+Skupaj$obmocje[Skupaj$obmocje == "Bulgaria"] <- "Bulgarija"
+Skupaj$obmocje[Skupaj$obmocje == "Czechia"] <- "Češka"
+Skupaj$obmocje[Skupaj$obmocje == "Denmark"] <- "Danska"
+Skupaj$obmocje[Skupaj$obmocje == "Germany (until 1990 former territory of the FRG)"] <- "Nemčija"
+Skupaj$obmocje[Skupaj$obmocje == "Estonia"] <- "Estonija"
+Skupaj$obmocje[Skupaj$obmocje == "Ireland"] <- "Irska"
+Skupaj$obmocje[Skupaj$obmocje == "Greece"] <- "Grčija"
+Skupaj$obmocje[Skupaj$obmocje == "Spain"] <- "Španija"
+Skupaj$obmocje[Skupaj$obmocje == "France"] <- "Francija" 
+Skupaj$obmocje[Skupaj$obmocje == "Croatia"] <- "Hrvaška"
+Skupaj$obmocje[Skupaj$obmocje == "Italy"] <- "Italija"
+Skupaj$obmocje[Skupaj$obmocje == "Cyprus"] <- "Ciper"
+Skupaj$obmocje[Skupaj$obmocje == "Latvia"] <- "Latvija"
+Skupaj$obmocje[Skupaj$obmocje == "Lithuania"] <- "Litva"
+Skupaj$obmocje[Skupaj$obmocje == "Luxembourg"] <- "Luksemburg"
+Skupaj$obmocje[Skupaj$obmocje == "Hungary"] <- "Madžarska"
+Skupaj$obmocje[Skupaj$obmocje == "Netherlands"] <- "Nizozemska"
+Skupaj$obmocje[Skupaj$obmocje == "Austria"] <- "Avstrija"
+Skupaj$obmocje[Skupaj$obmocje == "Poland"] <- "Poljska"
+Skupaj$obmocje[Skupaj$obmocje == "Portugal"] <- "Portugalska"
+Skupaj$obmocje[Skupaj$obmocje == "Romania"] <- "Romunija"
+Skupaj$obmocje[Skupaj$obmocje == "Slovenia"] <- "Slovenija"
+Skupaj$obmocje[Skupaj$obmocje == "Slovakia"] <- "Slovaška"
+Skupaj$obmocje[Skupaj$obmocje == "Finland"] <- "Finska"
+Skupaj$obmocje[Skupaj$obmocje == "Sweden"] <- "Švedska"
+Skupaj$obmocje[Skupaj$obmocje == "Iceland"] <- "Islandija"
+Skupaj$obmocje[Skupaj$obmocje == "Norway"] <- "Norveška"
+Skupaj$obmocje[Skupaj$obmocje == "Switzerland"] <- "Švica"
+Skupaj$obmocje[Skupaj$obmocje == "United Kingdom"] <- "Združeno kraljestvo"
+
+################################################################################
+Zdrava <- read_csv("podatki/Zdrava_leta/podatki2.csv", na=",", locale=locale(encoding="Windows-1250"),
+                   col_types = cols(.default = col_guess(), 
+                                    UNIT = col_skip(), 
+                                    FlagandFootnotes = col_skip(),
+                                    INDIC_HE = col_skip()
+                   ))
+
+Zdrava <- Zdrava %>% relocate(obmocje = GEO, leto = TIME, spol = SEX, starost.ko.so.pogostejse.zdravstvene.tezave = Value)
 
 
-Zdrava <- read_csv("podatki/Zdrava_leta/podatki2.csv", na=",", locale=locale(encoding="Windows-1250"))
 
+
+################################################################################
 Postelje.v.bolnišnicah <- read_tsv("podatki/Postelje_v_bolnišnicah/postelje.tsv", na=",", locale=locale(encoding="Windows-1250"))
-Nesreče.v.službah <- read_html("podatki/Nesreče/nesreče.html", locale=locale(encoding="Windows-1250"))
+Postelje.v.bolnišnicah <- Postelje.v.bolnišnicah  %>% relocate(obmocje = GEOE)
+Postelje.v.bolnišnicah <- pivot_longer(Postelje.v.bolnišnicah, !obmocje, names_to = "leto", values_to = "vrednosti")
 
-Vzroki$obmocje[Vzroki$obmocje == "European Union - 28 countries (2013-2020)"] <- "Evropska unija"
-Vzroki$obmocje[Vzroki$obmocje == "Belgium"] <- "Belgija"
-Vzroki$obmocje[Vzroki$obmocje == "Bulgaria"] <- "Bulgarija"
-Vzroki$obmocje[Vzroki$obmocje == "Czechia"] <- "Češka"
-Vzroki$obmocje[Vzroki$obmocje == "Denmark"] <- "Danska"
-Vzroki$obmocje[Vzroki$obmocje == "Germany (until 1990 former territory of the FRG)"] <- "Nemčija"
-Vzroki$obmocje[Vzroki$obmocje == "Estonia"] <- "Estonija"
-Vzroki$obmocje[Vzroki$obmocje == "Ireland"] <- "Irska"
-Vzroki$obmocje[Vzroki$obmocje == "Greece"] <- "Grčija"
-Vzroki$obmocje[Vzroki$obmocje == "Spain"] <- "Španija"
-Vzroki$obmocje[Vzroki$obmocje == "France"] <- "Francija" 
-Vzroki$obmocje[Vzroki$obmocje == "Croatia"] <- "Hrvaška"
-Vzroki$obmocje[Vzroki$obmocje == "Italy"] <- "Italija"
-Vzroki$obmocje[Vzroki$obmocje == "Cyprus"] <- "Ciper"
-Vzroki$obmocje[Vzroki$obmocje == "Latvia"] <- "Latvija"
-Vzroki$obmocje[Vzroki$obmocje == "Lithuania"] <- "Litva"
-Vzroki$obmocje[Vzroki$obmocje == "Luxembourg"] <- "Luksemburg"
-Vzroki$obmocje[Vzroki$obmocje == "Hungary"] <- "Madžarska"
-Vzroki$obmocje[Vzroki$obmocje == "Netherlands"] <- "Nizozemska"
-Vzroki$obmocje[Vzroki$obmocje == "Austria"] <- "Avstrija"
-Vzroki$obmocje[Vzroki$obmocje == "Poland"] <- "Poljska"
-Vzroki$obmocje[Vzroki$obmocje == "Portugal"] <- "Portugalska"
-Vzroki$obmocje[Vzroki$obmocje == "Romania"] <- "Romunija"
-Vzroki$obmocje[Vzroki$obmocje == "Slovenia"] <- "Slovenija"
-Vzroki$obmocje[Vzroki$obmocje == "Slovakia"] <- "Slovaška"
-Vzroki$obmocje[Vzroki$obmocje == "Finland"] <- "Finska"
-Vzroki$obmocje[Vzroki$obmocje == "Sweden"] <- "Švedska"
-Vzroki$obmocje[Vzroki$obmocje == "Iceland"] <- "Islandija"
-Vzroki$obmocje[Vzroki$obmocje == "Norway"] <- "Norveška"
-Vzroki$obmocje[Vzroki$obmocje == "Switzerland"] <- "Švica"
-Vzroki$obmocje[Vzroki$obmocje == "United Kingdom"] <- "Združeno kraljestvo"
+Postelje.v.bolnišnicah$obmocje[Postelje.v.bolnišnicah$obmocje == "European Union - 28 countries (2013-2020),Number,Available beds in hospitals (HP.1)"] <- "Evropska unija"
+Postelje.v.bolnišnicah$obmocje[Postelje.v.bolnišnicah$obmocje == "Belgium,Number,Available beds in hospitals (HP.1)"] <- "Belgija"
+Postelje.v.bolnišnicah$obmocje[Postelje.v.bolnišnicah$obmocje == "Bulgaria,Number,Available beds in hospitals (HP.1)"] <- "Bulgarija"
+Postelje.v.bolnišnicah$obmocje[Postelje.v.bolnišnicah$obmocje == "Czechia,Number,Available beds in hospitals (HP.1)"] <- "Češka"
+Postelje.v.bolnišnicah$obmocje[Postelje.v.bolnišnicah$obmocje == "Denmark,Number,Available beds in hospitals (HP.1)"] <- "Danska"
+Postelje.v.bolnišnicah$obmocje[Postelje.v.bolnišnicah$obmocje == "Germany (until 1990 former territory of the FRG),Number,Available beds in hospitals (HP.1)"] <- "Nemčija"
+Postelje.v.bolnišnicah$obmocje[Postelje.v.bolnišnicah$obmocje == "Estonia,Number,Available beds in hospitals (HP.1)"] <- "Estonija"
+Postelje.v.bolnišnicah$obmocje[Postelje.v.bolnišnicah$obmocje == "Ireland,Number,Available beds in hospitals (HP.1)"] <- "Irska"
+Postelje.v.bolnišnicah$obmocje[Postelje.v.bolnišnicah$obmocje == "Greece,Number,Available beds in hospitals (HP.1)"] <- "Grčija"
+Postelje.v.bolnišnicah$obmocje[Postelje.v.bolnišnicah$obmocje == "Spain,Number,Available beds in hospitals (HP.1)"] <- "Španija"
+Postelje.v.bolnišnicah$obmocje[Postelje.v.bolnišnicah$obmocje == "France,Number,Available beds in hospitals (HP.1)"] <- "Francija" 
+Postelje.v.bolnišnicah$obmocje[Postelje.v.bolnišnicah$obmocje == "Croatia,Number,Available beds in hospitals (HP.1)"] <- "Hrvaška"
+Postelje.v.bolnišnicah$obmocje[Postelje.v.bolnišnicah$obmocje == "Italy,Number,Available beds in hospitals (HP.1)"] <- "Italija"
+Postelje.v.bolnišnicah$obmocje[Postelje.v.bolnišnicah$obmocje == "Cyprus,Number,Available beds in hospitals (HP.1)"] <- "Ciper"
+Postelje.v.bolnišnicah$obmocje[Postelje.v.bolnišnicah$obmocje == "Latvia,Number,Available beds in hospitals (HP.1)"] <- "Latvija"
+Postelje.v.bolnišnicah$obmocje[Postelje.v.bolnišnicah$obmocje == "Lithuania,Number,Available beds in hospitals (HP.1)"] <- "Litva"
+Postelje.v.bolnišnicah$obmocje[Postelje.v.bolnišnicah$obmocje == "Luxembourg,Number,Available beds in hospitals (HP.1)"] <- "Luksemburg"
+Postelje.v.bolnišnicah$obmocje[Postelje.v.bolnišnicah$obmocje == "Hungary,Number,Available beds in hospitals (HP.1)"] <- "Madžarska"
+Postelje.v.bolnišnicah$obmocje[Postelje.v.bolnišnicah$obmocje == "Netherlands,Number,Available beds in hospitals (HP.1)"] <- "Nizozemska"
+Postelje.v.bolnišnicah$obmocje[Postelje.v.bolnišnicah$obmocje == "Austria,Number,Available beds in hospitals (HP.1)"] <- "Avstrija"
+Postelje.v.bolnišnicah$obmocje[Postelje.v.bolnišnicah$obmocje == "Poland,Number,Available beds in hospitals (HP.1)"] <- "Poljska"
+Postelje.v.bolnišnicah$obmocje[Postelje.v.bolnišnicah$obmocje == "Portugal,Number,Available beds in hospitals (HP.1)"] <- "Portugalska"
+Postelje.v.bolnišnicah$obmocje[Postelje.v.bolnišnicah$obmocje == "Romania,Number,Available beds in hospitals (HP.1)"] <- "Romunija"
+Postelje.v.bolnišnicah$obmocje[Postelje.v.bolnišnicah$obmocje == "Slovenia,Number,Available beds in hospitals (HP.1)"] <- "Slovenija"
+Postelje.v.bolnišnicah$obmocje[Postelje.v.bolnišnicah$obmocje == "Slovakia,Number,Available beds in hospitals (HP.1)"] <- "Slovaška"
+Postelje.v.bolnišnicah$obmocje[Postelje.v.bolnišnicah$obmocje == "Finland,Number,Available beds in hospitals (HP.1)"] <- "Finska"
+Postelje.v.bolnišnicah$obmocje[Postelje.v.bolnišnicah$obmocje == "Sweden,Number,Available beds in hospitals (HP.1)"] <- "Švedska"
+Postelje.v.bolnišnicah$obmocje[Postelje.v.bolnišnicah$obmocje == "Iceland,Number,Available beds in hospitals (HP.1)"] <- "Islandija"
+Postelje.v.bolnišnicah$obmocje[Postelje.v.bolnišnicah$obmocje == "Norway,Number,Available beds in hospitals (HP.1)"] <- "Norveška"
+Postelje.v.bolnišnicah$obmocje[Postelje.v.bolnišnicah$obmocje == "Switzerland,Number,Available beds in hospitals (HP.1)"] <- "Švica"
+Postelje.v.bolnišnicah$obmocje[Postelje.v.bolnišnicah$obmocje == "United Kingdom,Number,Available beds in hospitals (HP.1)"] <- "Združeno kraljestvo"
+
+Postelje.v.bolnišnicah <- Postelje.v.bolnišnicah[!grepl("Malta", Postelje.v.bolnišnicah$obmocje),]
+Postelje.v.bolnišnicah <- Postelje.v.bolnišnicah[!grepl("Liechtenstein", Postelje.v.bolnišnicah$obmocje),]
+Postelje.v.bolnišnicah <- Postelje.v.bolnišnicah[!grepl("Macedonia", Postelje.v.bolnišnicah$obmocje),]
+Postelje.v.bolnišnicah <- Postelje.v.bolnišnicah[!grepl("Albania" , Postelje.v.bolnišnicah$obmocje),] 
+Postelje.v.bolnišnicah <- Postelje.v.bolnišnicah[!grepl("Serbia" , Postelje.v.bolnišnicah$obmocje),]
+Postelje.v.bolnišnicah <- Postelje.v.bolnišnicah[!grepl("Turkey" , Postelje.v.bolnišnicah$obmocje),]
+Postelje.v.bolnišnicah <- Postelje.v.bolnišnicah[!grepl("Montenegro" , Postelje.v.bolnišnicah$obmocje),]
+################################################################################
+
+Nesreče.v.službah <- read_tsv("podatki/Nesreče/nesreče.tsv", na=",", locale=locale(encoding="Windows-1250"))
+Nesreče.v.službah <- Nesreče.v.službah  %>% relocate(obmocje = GEOE)
+Nesreče.v.službah$"2013" <- as.character(Nesreče.v.službah$"2013") 
+Nesreče.v.službah <- pivot_longer(Nesreče.v.službah, !obmocje, names_to = "leto", values_to = "vrednosti")
+
+Poskodba.stiri.ali.vec.dni <- Nesreče.v.službah %>% slice(1:568)
+#razdeli nesreče na smrtno in 4 ali vec dni
+
+Nesreče.v.službah$obmocje[Nesreče.v.službah$obmocje == "European Union - 28 countries (2013-2020),Number,Total,Total,4 days or over,Agriculture; industry and construction (except mining); services of the business economy"] <- "Evropska unija"
+Nesreče.v.službah$obmocje[Nesreče.v.službah$obmocje == "Belgium,Number,Total,Total,4 days or over,Agriculture; industry and construction (except mining); services of the business economy"] <- "Belgija"
+Nesreče.v.službah$obmocje[Nesreče.v.službah$obmocje == "Bulgaria,Number,Total,Total,4 days or over,Agriculture; industry and construction (except mining); services of the business economy"] <- "Bulgarija"
+Nesreče.v.službah$obmocje[Nesreče.v.službah$obmocje == "Czechia,Number,Total,Total,4 days or over,Agriculture; industry and construction (except mining); services of the business economy"] <- "Češka"
+Nesreče.v.službah$obmocje[Nesreče.v.službah$obmocje == "Denmark,Number,Total,Total,4 days or over,Agriculture; industry and construction (except mining); services of the business economy"] <- "Danska"
+Nesreče.v.službah$obmocje[Nesreče.v.službah$obmocje == "Germany (until 1990 former territory of the FRG),Number,Total,Total,4 days or over,Agriculture; industry and construction (except mining); services of the business economy"] <- "Nemčija"
+Nesreče.v.službah$obmocje[Nesreče.v.službah$obmocje == "Estonia,Number,Total,Total,4 days or over,Agriculture; industry and construction (except mining); services of the business economy"] <- "Estonija"
+Nesreče.v.službah$obmocje[Nesreče.v.službah$obmocje == "Ireland,Number,Total,Total,4 days or over,Agriculture; industry and construction (except mining); services of the business economy"] <- "Irska"
+Nesreče.v.službah$obmocje[Nesreče.v.službah$obmocje == "Greece,Number,Total,Total,4 days or over,Agriculture; industry and construction (except mining); services of the business economy"] <- "Grčija"
+Nesreče.v.službah$obmocje[Nesreče.v.službah$obmocje == "Spain,Number,Total,Total,4 days or over,Agriculture; industry and construction (except mining); services of the business economy"] <- "Španija"
+Nesreče.v.službah$obmocje[Nesreče.v.službah$obmocje == "France,Number,Total,Total,4 days or over,Agriculture; industry and construction (except mining); services of the business economy"] <- "Francija" 
+Nesreče.v.službah$obmocje[Nesreče.v.službah$obmocje == "Croatia,Number,Total,Total,4 days or over,Agriculture; industry and construction (except mining); services of the business economy"] <- "Hrvaška"
+Nesreče.v.službah$obmocje[Nesreče.v.službah$obmocje == "Italy,Number,Total,Total,4 days or over,Agriculture; industry and construction (except mining); services of the business economy"] <- "Italija"
+Nesreče.v.službah$obmocje[Nesreče.v.službah$obmocje == "Cyprus,Number,Total,Total,4 days or over,Agriculture; industry and construction (except mining); services of the business economy"] <- "Ciper"
+Nesreče.v.službah$obmocje[Nesreče.v.službah$obmocje == "Latvia,Number,Total,Total,4 days or over,Agriculture; industry and construction (except mining); services of the business economy"] <- "Latvija"
+Nesreče.v.službah$obmocje[Nesreče.v.službah$obmocje == "Lithuania,Number,Total,Total,4 days or over,Agriculture; industry and construction (except mining); services of the business economy"] <- "Litva"
+Nesreče.v.službah$obmocje[Nesreče.v.službah$obmocje == "Luxembourg,Number,Total,Total,4 days or over,Agriculture; industry and construction (except mining); services of the business economy"] <- "Luksemburg"
+Nesreče.v.službah$obmocje[Nesreče.v.službah$obmocje == "Hungary,Number,Total,Total,4 days or over,Agriculture; industry and construction (except mining); services of the business economy"] <- "Madžarska"
+Nesreče.v.službah$obmocje[Nesreče.v.službah$obmocje == "Netherlands,Number,Total,Total,4 days or over,Agriculture; industry and construction (except mining); services of the business economy"] <- "Nizozemska"
+Nesreče.v.službah$obmocje[Nesreče.v.službah$obmocje == "Austria,Number,Total,Total,4 days or over,Agriculture; industry and construction (except mining); services of the business economy"] <- "Avstrija"
+Nesreče.v.službah$obmocje[Nesreče.v.službah$obmocje == "Poland,Number,Total,Total,4 days or over,Agriculture; industry and construction (except mining); services of the business economy"] <- "Poljska"
+Nesreče.v.službah$obmocje[Nesreče.v.službah$obmocje == "Portugal,Number,Total,Total,4 days or over,Agriculture; industry and construction (except mining); services of the business economy"] <- "Portugalska"
+Nesreče.v.službah$obmocje[Nesreče.v.službah$obmocje == "Romania,Number,Total,Total,4 days or over,Agriculture; industry and construction (except mining); services of the business economy"] <- "Romunija"
+Nesreče.v.službah$obmocje[Nesreče.v.službah$obmocje == "Slovenia,Number,Total,Total,4 days or over,Agriculture; industry and construction (except mining); services of the business economy"] <- "Slovenija"
+Nesreče.v.službah$obmocje[Nesreče.v.službah$obmocje == "Slovakia,Number,Total,Total,4 days or over,Agriculture; industry and construction (except mining); services of the business economy"] <- "Slovaška"
+Nesreče.v.službah$obmocje[Nesreče.v.službah$obmocje == "Finland,Number,Total,Total,4 days or over,Agriculture; industry and construction (except mining); services of the business economy"] <- "Finska"
+Nesreče.v.službah$obmocje[Nesreče.v.službah$obmocje == "Sweden,Number,Total,Total,4 days or over,Agriculture; industry and construction (except mining); services of the business economy"] <- "Švedska"
+Nesreče.v.službah$obmocje[Nesreče.v.službah$obmocje == "Iceland,Number,Total,Total,4 days or over,Agriculture; industry and construction (except mining); services of the business economy"] <- "Islandija"
+Nesreče.v.službah$obmocje[Nesreče.v.službah$obmocje == "Norway,Number,Total,Total,4 days or over,Agriculture; industry and construction (except mining); services of the business economy"] <- "Norveška"
+Nesreče.v.službah$obmocje[Nesreče.v.službah$obmocje == "Switzerland,Number,Total,Total,4 days or over,Agriculture; industry and construction (except mining); services of the business economy"] <- "Švica"
+Nesreče.v.službah$obmocje[Nesreče.v.službah$obmocje == "United Kingdom,Number,Total,Total,4 days or over,Agriculture; industry and construction (except mining); services of the business economy"] <- "Združeno kraljestvo"
+
+Nesreče.v.službah <- Nesreče.v.službah[!grepl("Malta", Nesreče.v.službah$obmocje),]
+
+568
+
+#Ugotovi kako s pomočjo pivot_longer in pivot_wider narediti da bosta imeli postelje in nesreče leta po vrsticah vrednosti pa bodo na konuc v nazdnjem stolpcu
