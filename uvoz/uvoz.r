@@ -1,11 +1,11 @@
 # 2. faza: Uvoz podatkov
 sl <- locale("sl", decimal_mark=",", grouping_mark=".")
 
-Vzroki <- read_csv("podatki/Vzroki/podatki1.csv", na=",", locale=locale(encoding="Windows-1250"), 
+Vzroki <- read_csv("podatki/Vzroki/podatki3.csv", na=",", locale=locale(encoding="Windows-1250"), 
   col_types = cols(.default = col_guess(), 
   UNIT = col_skip(), 
-  AGE = col_skip(), 
   RESID = col_skip(),
+  AGE = col_skip(), 
   FlagandFootnotes = col_skip()
 ))
 
@@ -186,10 +186,10 @@ Postelje.v.bolnišnicah <- Postelje.v.bolnišnicah[!grepl("Montenegro" , Postelj
 Nesreče.v.službah <- read_tsv("podatki/Nesreče/nesreče.tsv", na=",", locale=locale(encoding="Windows-1250"))
 Nesreče.v.službah <- Nesreče.v.službah  %>% relocate(obmocje = GEOE)
 Nesreče.v.službah$"2013" <- as.character(Nesreče.v.službah$"2013") 
-Nesreče.v.službah <- pivot_longer(Nesreče.v.službah, !obmocje, names_to = "leto", values_to = "vrednosti")
+Nesreče.v.službah <- pivot_longer(Nesreče.v.službah, !obmocje, names_to = "leto", values_to = "število.nesreč")
 
 Poskodba.stiri.ali.vec.dni <- Nesreče.v.službah %>% slice(1:568)
-#razdeli nesreče na smrtno in 4 ali vec dni
+#razdeli nesreče na smrtno in 4 ali vec dni skupno(1-288 4 ali vec, 289-568 smrtno)
 
 Nesreče.v.službah$obmocje[Nesreče.v.službah$obmocje == "European Union - 28 countries (2013-2020),Number,Total,Total,4 days or over,Agriculture; industry and construction (except mining); services of the business economy"] <- "Evropska unija"
 Nesreče.v.službah$obmocje[Nesreče.v.službah$obmocje == "Belgium,Number,Total,Total,4 days or over,Agriculture; industry and construction (except mining); services of the business economy"] <- "Belgija"
@@ -222,9 +222,58 @@ Nesreče.v.službah$obmocje[Nesreče.v.službah$obmocje == "Iceland,Number,Total
 Nesreče.v.službah$obmocje[Nesreče.v.službah$obmocje == "Norway,Number,Total,Total,4 days or over,Agriculture; industry and construction (except mining); services of the business economy"] <- "Norveška"
 Nesreče.v.službah$obmocje[Nesreče.v.službah$obmocje == "Switzerland,Number,Total,Total,4 days or over,Agriculture; industry and construction (except mining); services of the business economy"] <- "Švica"
 Nesreče.v.službah$obmocje[Nesreče.v.službah$obmocje == "United Kingdom,Number,Total,Total,4 days or over,Agriculture; industry and construction (except mining); services of the business economy"] <- "Združeno kraljestvo"
+Nesreče.v.službah$obmocje[Nesreče.v.službah$obmocje == "Malta,Number,Total,Total,4 days or over,Agriculture; industry and construction (except mining); services of the business economy"] <- "Malta"
 
+class(Nesreče.v.službah$"leto") = "double"
+Nesreče.v.službah["spol"] <-rep("Skupaj", 1674)
 Nesreče.v.službah <- Nesreče.v.službah[!grepl("Malta", Nesreče.v.službah$obmocje),]
 
-568
+prebivalstvo.nesreče <- Prebivalstvo %>%
+  slice(which(row_number() %% 3 == 1)) %>%
+  slice(1:340)
+prebivalstvo.nesreče <- prebivalstvo.nesreče[!grepl('metropolitan', prebivalstvo.nesreče$obmocje),] 
+prebivalstvo.nesreče <- prebivalstvo.nesreče[!grepl('Liechtenstein', prebivalstvo.nesreče$obmocje),] 
 
-#Ugotovi kako s pomočjo pivot_longer in pivot_wider narediti da bosta imeli postelje in nesreče leta po vrsticah vrednosti pa bodo na konuc v nazdnjem stolpcu
+prebivalstvo.nesreče$obmocje[prebivalstvo.nesreče$obmocje == "European Union - 28 countries (2013-2020)"] <- "Evropska unija"
+prebivalstvo.nesreče$obmocje[prebivalstvo.nesreče$obmocje == "Belgium"] <- "Belgija"
+prebivalstvo.nesreče$obmocje[prebivalstvo.nesreče$obmocje == "Bulgaria"] <- "Bulgarija"
+prebivalstvo.nesreče$obmocje[prebivalstvo.nesreče$obmocje == "Czechia"] <- "Češka"
+prebivalstvo.nesreče$obmocje[prebivalstvo.nesreče$obmocje == "Denmark"] <- "Danska"
+prebivalstvo.nesreče$obmocje[prebivalstvo.nesreče$obmocje == "Germany (until 1990 former territory of the FRG)"] <- "Nemčija"
+prebivalstvo.nesreče$obmocje[prebivalstvo.nesreče$obmocje == "Estonia"] <- "Estonija"
+prebivalstvo.nesreče$obmocje[prebivalstvo.nesreče$obmocje == "Ireland"] <- "Irska"
+prebivalstvo.nesreče$obmocje[prebivalstvo.nesreče$obmocje == "Greece"] <- "Grčija"
+prebivalstvo.nesreče$obmocje[prebivalstvo.nesreče$obmocje == "Spain"] <- "Španija"
+prebivalstvo.nesreče$obmocje[prebivalstvo.nesreče$obmocje == "France"] <- "Francija" 
+prebivalstvo.nesreče$obmocje[prebivalstvo.nesreče$obmocje == "Croatia"] <- "Hrvaška"
+prebivalstvo.nesreče$obmocje[prebivalstvo.nesreče$obmocje == "Italy"] <- "Italija"
+prebivalstvo.nesreče$obmocje[prebivalstvo.nesreče$obmocje == "Cyprus"] <- "Ciper"
+prebivalstvo.nesreče$obmocje[prebivalstvo.nesreče$obmocje == "Latvia"] <- "Latvija"
+prebivalstvo.nesreče$obmocje[prebivalstvo.nesreče$obmocje == "Lithuania"] <- "Litva"
+prebivalstvo.nesreče$obmocje[prebivalstvo.nesreče$obmocje == "Luxembourg"] <- "Luksemburg"
+prebivalstvo.nesreče$obmocje[prebivalstvo.nesreče$obmocje == "Hungary"] <- "Madžarska"
+prebivalstvo.nesreče$obmocje[prebivalstvo.nesreče$obmocje == "Netherlands"] <- "Nizozemska"
+prebivalstvo.nesreče$obmocje[prebivalstvo.nesreče$obmocje == "Austria"] <- "Avstrija"
+prebivalstvo.nesreče$obmocje[prebivalstvo.nesreče$obmocje == "Poland"] <- "Poljska"
+prebivalstvo.nesreče$obmocje[prebivalstvo.nesreče$obmocje == "Portugal"] <- "Portugalska"
+prebivalstvo.nesreče$obmocje[prebivalstvo.nesreče$obmocje == "Romania"] <- "Romunija"
+prebivalstvo.nesreče$obmocje[prebivalstvo.nesreče$obmocje == "Slovenia"] <- "Slovenija"
+prebivalstvo.nesreče$obmocje[prebivalstvo.nesreče$obmocje == "Slovakia"] <- "Slovaška"
+prebivalstvo.nesreče$obmocje[prebivalstvo.nesreče$obmocje == "Finland"] <- "Finska"
+prebivalstvo.nesreče$obmocje[prebivalstvo.nesreče$obmocje == "Sweden"] <- "Švedska"
+prebivalstvo.nesreče$obmocje[prebivalstvo.nesreče$obmocje == "Iceland"] <- "Islandija"
+prebivalstvo.nesreče$obmocje[prebivalstvo.nesreče$obmocje == "Norway"] <- "Norveška"
+prebivalstvo.nesreče$obmocje[prebivalstvo.nesreče$obmocje == "Switzerland"] <- "Švica"
+prebivalstvo.nesreče$obmocje[prebivalstvo.nesreče$obmocje == "United Kingdom"] <- "Združeno kraljestvo"
+prebivalstvo.nesreče$obmocje[prebivalstvo.nesreče$obmocje == "Finland"] <- "Finska"
+
+#prebivalstvo.nesreče <-  subset(prebivalstvo.nesreče, select = -c(spol) )
+
+
+nesrece.prebivalstvo <- left_join(Nesreče.v.službah, prebivalstvo.nesreče, by=c("obmocje","leto"))
+nesrece.prebivalstvo <-  subset(nesrece.prebivalstvo, select = -c(spol.x,spol.y) )
+
+
+
+
+
