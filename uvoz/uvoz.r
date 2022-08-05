@@ -15,7 +15,6 @@ Vzroki <- Vzroki[!grepl('metropolitan', Vzroki$obmocje),]
 Vzroki <- Vzroki[!grepl('Serbia', Vzroki$obmocje),] 
 Vzroki <- Vzroki[!grepl('Turkey', Vzroki$obmocje),]
 
-
 Vzroki$spol[Vzroki$spol == "Total"] <- "Skupaj"
 Vzroki$spol[Vzroki$spol == "Males"] <- "Moški"
 Vzroki$spol[Vzroki$spol == "Females"] <- "Ženske"
@@ -70,27 +69,26 @@ Prebivalstvo$spol[Prebivalstvo$spol == "Average population - total"] <- "Skupaj"
 Prebivalstvo$spol[Prebivalstvo$spol == "Average population - males"] <- "Moški"
 Prebivalstvo$spol[Prebivalstvo$spol == "Average population - females"] <- "Ženske"
 
-Vzrokis <-Vzroki %>% filter(grepl("Skupaj", spol)) 
-Vzrokiz <-Vzroki %>% filter(grepl("Ženske", spol))
-Vzrokim <-Vzroki %>% filter(grepl("Moški", spol))
+Vzroki.s <-Vzroki %>% filter(grepl("Skupaj", spol)) 
+Vzroki.z <-Vzroki %>% filter(grepl("Ženske", spol))
+Vzroki.m <-Vzroki %>% filter(grepl("Moški", spol))
 
-Prebivalstvos <- Prebivalstvo %>% filter(grepl("Skupaj", spol))
-Prebivalstvoz <- Prebivalstvo %>% filter(grepl("Ženske", spol))
-Prebivalstvom <- Prebivalstvo %>% filter(grepl("Moški", spol))
+Prebivalstvo.s <- Prebivalstvo %>% filter(grepl("Skupaj", spol))
+Prebivalstvo.z <- Prebivalstvo %>% filter(grepl("Ženske", spol))
+Prebivalstvo.m <- Prebivalstvo %>% filter(grepl("Moški", spol))
 
-Novas <- left_join(Vzrokis, Prebivalstvos, by=c("obmocje", "leto"))
-Novaz <- left_join(Vzrokiz, Prebivalstvoz, by=c("obmocje", "leto"))
-Novam <- left_join(Vzrokim, Prebivalstvom, by=c("obmocje", "leto"))
+vzroki.prebivalstvo.s <- left_join(Vzroki.s, Prebivalstvo.s, by=c("obmocje", "leto"))
+vzroki.prebivalstvo.z <- left_join(Vzroki.z, Prebivalstvo.z, by=c("obmocje", "leto"))
+vzroki.prebivalstvo.m <- left_join(Vzroki.m, Prebivalstvo.m, by=c("obmocje", "leto"))
 
-Novas <- subset (Novas, select = -spol.y)
-Novas <- Novas %>% relocate(leto = leto, obmocje = obmocje, spol = spol.x, vzrok = vzrok,  ljudje.z.boleznijo = stevilo.prebivalcev.x, stevilo.prebivalcev = stevilo.prebivalcev.y)
-Novaz <- subset (Novaz, select = -spol.y)
-Novaz <- Novaz %>% relocate(leto = leto, obmocje = obmocje, spol = spol.x, vzrok = vzrok, ljudje.z.boleznijo = stevilo.prebivalcev.x, stevilo.prebivalcev = stevilo.prebivalcev.y)
-Novam <- subset (Novam, select = -spol.y)
-Novam <- Novam %>% relocate(leto = leto, obmocje = obmocje, spol = spol.x, vzrok = vzrok, ljudje.z.boleznijo = stevilo.prebivalcev.x, stevilo.prebivalcev = stevilo.prebivalcev.y)
+vzroki.prebivalstvo.s <- subset (vzroki.prebivalstvo.s, select = -spol.y)
+vzroki.prebivalstvo.s <- vzroki.prebivalstvo.s %>% relocate(leto = leto, obmocje = obmocje, spol = spol.x, vzrok = vzrok,  ljudje.z.boleznijo = stevilo.prebivalcev.x, stevilo.prebivalcev = stevilo.prebivalcev.y)
+vzroki.prebivalstvo.z <- subset (vzroki.prebivalstvo.z, select = -spol.y)
+vzroki.prebivalstvo.z <- vzroki.prebivalstvo.z %>% relocate(leto = leto, obmocje = obmocje, spol = spol.x, vzrok = vzrok, ljudje.z.boleznijo = stevilo.prebivalcev.x, stevilo.prebivalcev = stevilo.prebivalcev.y)
+vzroki.prebivalstvo.m <- subset (vzroki.prebivalstvo.m, select = -spol.y)
+vzroki.prebivalstvo.m <- vzroki.prebivalstvo.m %>% relocate(leto = leto, obmocje = obmocje, spol = spol.x, vzrok = vzrok, ljudje.z.boleznijo = stevilo.prebivalcev.x, stevilo.prebivalcev = stevilo.prebivalcev.y)
 
-Skupaj <- rbind(Novas, Novaz, Novam)
-#Odloči se kako bi sploh imel tabele, trenutno imaš združeno Vzroki in Prebivalstvo po spolu in skupno
+Skupaj <- rbind(vzroki.prebivalstvo.s, vzroki.prebivalstvo.z, vzroki.prebivalstvo.m)
 
 Skupaj$obmocje[Skupaj$obmocje == "European Union - 28 countries (2013-2020)"] <- "Evropska unija"
 Skupaj$obmocje[Skupaj$obmocje == "Belgium"] <- "Belgija"
@@ -124,7 +122,11 @@ Skupaj$obmocje[Skupaj$obmocje == "Norway"] <- "Norveška"
 Skupaj$obmocje[Skupaj$obmocje == "Switzerland"] <- "Švica"
 Skupaj$obmocje[Skupaj$obmocje == "United Kingdom"] <- "Združeno kraljestvo"
 
-################################################################################
+Skupaj <- type.convert(Skupaj, na.strings = ":", as.is = 0)
+Skupaj <- as.data.frame(Skupaj)
+Skupaj[is.na(Skupaj)] <- 0
+
+################################################################################################################################################################
 Zdrava <- read_csv("podatki/Zdrava_leta/podatki2.csv", na=",", locale=locale(encoding="Windows-1250"),
                    col_types = cols(.default = col_guess(), 
                                     UNIT = col_skip(), 
@@ -132,15 +134,63 @@ Zdrava <- read_csv("podatki/Zdrava_leta/podatki2.csv", na=",", locale=locale(enc
                                     INDIC_HE = col_skip()
                    ))
 
-Zdrava <- Zdrava %>% relocate(obmocje = GEO, leto = TIME, spol = SEX, starost.ko.so.pogostejse.zdravstvene.tezave = Value)
+Zdrava <- Zdrava %>% relocate(obmocje = GEO, leto = TIME, spol = SEX)
+class(Zdrava$"leto") = "double"
 
+Zdrava$obmocje[Zdrava$obmocje == "European Union - 28 countries (2013-2020)"] <- "Evropska unija"
+Zdrava$obmocje[Zdrava$obmocje == "Belgium"] <- "Belgija"
+Zdrava$obmocje[Zdrava$obmocje == "Bulgaria"] <- "Bulgarija"
+Zdrava$obmocje[Zdrava$obmocje == "Czechia"] <- "Češka"
+Zdrava$obmocje[Zdrava$obmocje == "Denmark"] <- "Danska"
+Zdrava$obmocje[Zdrava$obmocje == "Germany (until 1990 former territory of the FRG)"] <- "Nemčija"
+Zdrava$obmocje[Zdrava$obmocje == "Estonia"] <- "Estonija"
+Zdrava$obmocje[Zdrava$obmocje == "Ireland"] <- "Irska"
+Zdrava$obmocje[Zdrava$obmocje == "Greece"] <- "Grčija"
+Zdrava$obmocje[Zdrava$obmocje == "Spain"] <- "Španija"
+Zdrava$obmocje[Zdrava$obmocje == "France"] <- "Francija" 
+Zdrava$obmocje[Zdrava$obmocje == "Croatia"] <- "Hrvaška"
+Zdrava$obmocje[Zdrava$obmocje == "Italy"] <- "Italija"
+Zdrava$obmocje[Zdrava$obmocje == "Cyprus"] <- "Ciper"
+Zdrava$obmocje[Zdrava$obmocje == "Latvia"] <- "Latvija"
+Zdrava$obmocje[Zdrava$obmocje == "Lithuania"] <- "Litva"
+Zdrava$obmocje[Zdrava$obmocje == "Luxembourg"] <- "Luksemburg"
+Zdrava$obmocje[Zdrava$obmocje == "Hungary"] <- "Madžarska"
+Zdrava$obmocje[Zdrava$obmocje == "Netherlands"] <- "Nizozemska"
+Zdrava$obmocje[Zdrava$obmocje == "Austria"] <- "Avstrija"
+Zdrava$obmocje[Zdrava$obmocje == "Poland"] <- "Poljska"
+Zdrava$obmocje[Zdrava$obmocje == "Portugal"] <- "Portugalska"
+Zdrava$obmocje[Zdrava$obmocje == "Romania"] <- "Romunija"
+Zdrava$obmocje[Zdrava$obmocje == "Slovenia"] <- "Slovenija"
+Zdrava$obmocje[Zdrava$obmocje == "Slovakia"] <- "Slovaška"
+Zdrava$obmocje[Zdrava$obmocje == "Finland"] <- "Finska"
+Zdrava$obmocje[Zdrava$obmocje == "Sweden"] <- "Švedska"
+Zdrava$obmocje[Zdrava$obmocje == "Iceland"] <- "Islandija"
+Zdrava$obmocje[Zdrava$obmocje == "Norway"] <- "Norveška"
+Zdrava$obmocje[Zdrava$obmocje == "Switzerland"] <- "Švica"
+Zdrava$obmocje[Zdrava$obmocje == "United Kingdom"] <- "Združeno kraljestvo"
 
+Zdrava.z <- Zdrava %>% filter(grepl("Females", spol)) 
+Zdrava.z <- subset(Zdrava.z, select = -c(spol) ) 
+names(Zdrava.z)[names(Zdrava.z) == "Value"] <- "pojav.zdr.tezav.pri.z"
+Zdrava.m <- Zdrava  %>% filter(grepl("Males", spol)) 
+Zdrava.m <- subset(Zdrava.m, select = -c(spol) )
+names(Zdrava.m)[names(Zdrava.m) == "Value"] <- "pojav.zdr.tezav.pri.m"
+Zdrava.s <- Zdrava  %>% filter(grepl("Total", spol)) 
+Zdrava.s <- subset(Zdrava.s, select = -c(spol) )
+names(Zdrava.s)[names(Zdrava.s) == "Value"] <- "pojav.zdr.tezav.skupaj"
 
-
-################################################################################
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 Postelje.v.bolnišnicah <- read_tsv("podatki/Postelje_v_bolnišnicah/postelje.tsv", na=",", locale=locale(encoding="Windows-1250"))
 Postelje.v.bolnišnicah <- Postelje.v.bolnišnicah  %>% relocate(obmocje = GEOE)
-Postelje.v.bolnišnicah <- pivot_longer(Postelje.v.bolnišnicah, !obmocje, names_to = "leto", values_to = "vrednosti")
+Postelje.v.bolnišnicah <- pivot_longer(Postelje.v.bolnišnicah, !obmocje, names_to = "leto", values_to = "število.postelj")
+
+
+Postelje.v.bolnišnicah$število.postelj <- gsub("e","",as.character(Postelje.v.bolnišnicah$število.postelj))
+Postelje.v.bolnišnicah$število.postelj <- gsub("b","",as.character(Postelje.v.bolnišnicah$število.postelj))
+Postelje.v.bolnišnicah$število.postelj <- gsub("p","",as.character(Postelje.v.bolnišnicah$število.postelj))
+
+p <- unlist(Postelje.v.bolnišnicah$število.postelj)
+Postelje.v.bolnišnicah$število.postelj <-  as.numeric(gsub(",", "", p))
 
 Postelje.v.bolnišnicah$obmocje[Postelje.v.bolnišnicah$obmocje == "European Union - 28 countries (2013-2020),Number,Available beds in hospitals (HP.1)"] <- "Evropska unija"
 Postelje.v.bolnišnicah$obmocje[Postelje.v.bolnišnicah$obmocje == "Belgium,Number,Available beds in hospitals (HP.1)"] <- "Belgija"
@@ -181,7 +231,21 @@ Postelje.v.bolnišnicah <- Postelje.v.bolnišnicah[!grepl("Albania" , Postelje.v
 Postelje.v.bolnišnicah <- Postelje.v.bolnišnicah[!grepl("Serbia" , Postelje.v.bolnišnicah$obmocje),]
 Postelje.v.bolnišnicah <- Postelje.v.bolnišnicah[!grepl("Turkey" , Postelje.v.bolnišnicah$obmocje),]
 Postelje.v.bolnišnicah <- Postelje.v.bolnišnicah[!grepl("Montenegro" , Postelje.v.bolnišnicah$obmocje),]
-################################################################################
+
+Postelje.v.bolnišnicah <- type.convert(Postelje.v.bolnišnicah, na.strings = ":", as.is = 0)
+Postelje.v.bolnišnicah$število.postelj <- as.integer(Postelje.v.bolnišnicah$število.postelj)
+Postelje.v.bolnišnicah <- Postelje.v.bolnišnicah %>% replace_na(list(število.postelj = 0))
+
+class(Postelje.v.bolnišnicah$"leto") = "integer"
+postelje.in.tezave <- left_join(Postelje.v.bolnišnicah, Zdrava.z, by=c("obmocje","leto"))
+postelje.in.tezave <- left_join(postelje.in.tezave, Zdrava.m, by=c("obmocje","leto"))
+postelje.in.tezave <- left_join(postelje.in.tezave, Zdrava.s, by=c("obmocje","leto"))
+
+postelje.in.tezave <- type.convert(postelje.in.tezave, na.strings = ":", as.is = 0)
+postelje.in.tezave <- as.data.frame(postelje.in.tezave)
+postelje.in.tezave[is.na(postelje.in.tezave)] <- 0
+
+################################################################################################################################################################
 
 Nesreče.v.službah <- read_tsv("podatki/Nesreče/nesreče.tsv", na=",", locale=locale(encoding="Windows-1250"))
 Nesreče.v.službah <- Nesreče.v.službah  %>% relocate(obmocje = GEOE)
@@ -189,7 +253,6 @@ Nesreče.v.službah$"2013" <- as.character(Nesreče.v.službah$"2013")
 Nesreče.v.službah <- pivot_longer(Nesreče.v.službah, !obmocje, names_to = "leto", values_to = "število.nesreč")
 
 Poskodba.stiri.ali.vec.dni <- Nesreče.v.službah %>% slice(1:568)
-#razdeli nesreče na smrtno in 4 ali vec dni skupno(1-288 4 ali vec, 289-568 smrtno)
 
 Nesreče.v.službah$obmocje[Nesreče.v.službah$obmocje == "European Union - 28 countries (2013-2020),Number,Total,Total,4 days or over,Agriculture; industry and construction (except mining); services of the business economy"] <- "Evropska unija"
 Nesreče.v.službah$obmocje[Nesreče.v.službah$obmocje == "Belgium,Number,Total,Total,4 days or over,Agriculture; industry and construction (except mining); services of the business economy"] <- "Belgija"
@@ -225,8 +288,8 @@ Nesreče.v.službah$obmocje[Nesreče.v.službah$obmocje == "United Kingdom,Numbe
 Nesreče.v.službah$obmocje[Nesreče.v.službah$obmocje == "Malta,Number,Total,Total,4 days or over,Agriculture; industry and construction (except mining); services of the business economy"] <- "Malta"
 
 class(Nesreče.v.službah$"leto") = "double"
-Nesreče.v.službah["spol"] <-rep("Skupaj", 1674)
 Nesreče.v.službah <- Nesreče.v.službah[!grepl("Malta", Nesreče.v.službah$obmocje),]
+Nesreče.v.službah["spol"] <-rep("Skupaj", 1674)
 
 prebivalstvo.nesreče <- Prebivalstvo %>%
   slice(which(row_number() %% 3 == 1)) %>%
@@ -267,13 +330,23 @@ prebivalstvo.nesreče$obmocje[prebivalstvo.nesreče$obmocje == "Switzerland"] <-
 prebivalstvo.nesreče$obmocje[prebivalstvo.nesreče$obmocje == "United Kingdom"] <- "Združeno kraljestvo"
 prebivalstvo.nesreče$obmocje[prebivalstvo.nesreče$obmocje == "Finland"] <- "Finska"
 
-#prebivalstvo.nesreče <-  subset(prebivalstvo.nesreče, select = -c(spol) )
-
-
 nesrece.prebivalstvo <- left_join(Nesreče.v.službah, prebivalstvo.nesreče, by=c("obmocje","leto"))
-nesrece.prebivalstvo <-  subset(nesrece.prebivalstvo, select = -c(spol.x,spol.y) )
+nesrece.prebivalstvo <-  subset(nesrece.prebivalstvo, select = -c(spol.x,spol.y) ) %>%
+  slice(1:279)
 
+nesrece.prebivalstvo$število.nesreč <- gsub("e","",as.character(nesrece.prebivalstvo$število.nesreč))
+nesrece.prebivalstvo$število.nesreč <- gsub("b","",as.character(nesrece.prebivalstvo$število.nesreč))
+nesrece.prebivalstvo$število.nesreč <- gsub("p","",as.character(nesrece.prebivalstvo$število.nesreč))
 
+pr <- unlist(nesrece.prebivalstvo$stevilo.prebivalcev)
+nesrece.prebivalstvo$stevilo.prebivalcev <-  as.numeric(gsub(",", "", pr))
 
+n <- unlist(nesrece.prebivalstvo$število.nesreč)
+nesrece.prebivalstvo$število.nesreč <-  as.numeric(gsub(",", "", n))
+nesrece.prebivalstvo <- type.convert(nesrece.prebivalstvo, na.strings = ":", as.is = 0)
+nesrece.prebivalstvo$število.nesreč <- as.integer(nesrece.prebivalstvo$število.nesreč)
+nesrece.prebivalstvo <- nesrece.prebivalstvo %>% replace_na(list(število.nesreč = 0))
+
+################################################################################################################################################################
 
 
