@@ -1,7 +1,7 @@
 # 2. faza: Uvoz podatkov
 sl <- locale("sl", decimal_mark=",", grouping_mark=".")
 
-Vzroki <- read_csv("podatki/Vzroki/podatki3.csv", na=",", locale=locale(encoding="Windows-1250"), 
+Vzroki <- read_csv("/Users/ianlampic/Desktop/APPR-2021-22/podatki/Vzroki/podatki3.csv", na=",", locale=locale(encoding="Windows-1250"), 
   col_types = cols(.default = col_guess(), 
   UNIT = col_skip(), 
   RESID = col_skip(),
@@ -36,7 +36,7 @@ Vzroki$vzrok[Vzroki$vzrok == "Certain conditions originating in the perinatal pe
 Vzroki$vzrok[Vzroki$vzrok == "Congenital malformations, deformations and chromosomal abnormalities (Q00-Q99)"] <- "Prirojene malformacije, deformacije in kromosomske nepravilnosti"
 Vzroki$vzrok[Vzroki$vzrok == "Symptoms, signs and abnormal clinical and laboratory findings, not elsewhere classified (R00-R99)"] <- "Simptomi, znaki in nenormalni klinični in laboratorijski izvidi, ki niso uvrščeni drugje"
 
-Prebivalstvo <- read_csv("podatki/Populacijan/populacija.csv", na=" ", locale=locale(encoding="Windows-1250"),
+Prebivalstvo <- read_csv("/Users/ianlampic/Desktop/APPR-2021-22/podatki/Populacijan/populacija.csv", na=" ", locale=locale(encoding="Windows-1250"),
                          col_types = cols(.default = col_guess(),
                                           FlagandFootnotes = col_skip()))
 
@@ -88,99 +88,7 @@ vzroki.prebivalstvo.z <- vzroki.prebivalstvo.z %>% relocate(leto = leto, obmocje
 vzroki.prebivalstvo.m <- subset (vzroki.prebivalstvo.m, select = -spol.y)
 vzroki.prebivalstvo.m <- vzroki.prebivalstvo.m %>% relocate(leto = leto, obmocje = obmocje, spol = spol.x, vzrok = vzrok, ljudje.z.boleznijo = stevilo.prebivalcev.x, stevilo.prebivalcev = stevilo.prebivalcev.y)
 
-Skupaj <- rbind(vzroki.prebivalstvo.s, vzroki.prebivalstvo.z, vzroki.prebivalstvo.m)
-
-Skupaj$obmocje[Skupaj$obmocje == "European Union - 28 countries (2013-2020)"] <- "Evropska unija"
-Skupaj$obmocje[Skupaj$obmocje == "Belgium"] <- "Belgija"
-Skupaj$obmocje[Skupaj$obmocje == "Bulgaria"] <- "Bulgarija"
-Skupaj$obmocje[Skupaj$obmocje == "Czechia"] <- "Češka"
-Skupaj$obmocje[Skupaj$obmocje == "Denmark"] <- "Danska"
-Skupaj$obmocje[Skupaj$obmocje == "Germany (until 1990 former territory of the FRG)"] <- "Nemčija"
-Skupaj$obmocje[Skupaj$obmocje == "Estonia"] <- "Estonija"
-Skupaj$obmocje[Skupaj$obmocje == "Ireland"] <- "Irska"
-Skupaj$obmocje[Skupaj$obmocje == "Greece"] <- "Grčija"
-Skupaj$obmocje[Skupaj$obmocje == "Spain"] <- "Španija"
-Skupaj$obmocje[Skupaj$obmocje == "France"] <- "Francija" 
-Skupaj$obmocje[Skupaj$obmocje == "Croatia"] <- "Hrvaška"
-Skupaj$obmocje[Skupaj$obmocje == "Italy"] <- "Italija"
-Skupaj$obmocje[Skupaj$obmocje == "Cyprus"] <- "Ciper"
-Skupaj$obmocje[Skupaj$obmocje == "Latvia"] <- "Latvija"
-Skupaj$obmocje[Skupaj$obmocje == "Lithuania"] <- "Litva"
-Skupaj$obmocje[Skupaj$obmocje == "Luxembourg"] <- "Luksemburg"
-Skupaj$obmocje[Skupaj$obmocje == "Hungary"] <- "Madžarska"
-Skupaj$obmocje[Skupaj$obmocje == "Netherlands"] <- "Nizozemska"
-Skupaj$obmocje[Skupaj$obmocje == "Austria"] <- "Avstrija"
-Skupaj$obmocje[Skupaj$obmocje == "Poland"] <- "Poljska"
-Skupaj$obmocje[Skupaj$obmocje == "Portugal"] <- "Portugalska"
-Skupaj$obmocje[Skupaj$obmocje == "Romania"] <- "Romunija"
-Skupaj$obmocje[Skupaj$obmocje == "Slovenia"] <- "Slovenija"
-Skupaj$obmocje[Skupaj$obmocje == "Slovakia"] <- "Slovaška"
-Skupaj$obmocje[Skupaj$obmocje == "Finland"] <- "Finska"
-Skupaj$obmocje[Skupaj$obmocje == "Sweden"] <- "Švedska"
-Skupaj$obmocje[Skupaj$obmocje == "Iceland"] <- "Islandija"
-Skupaj$obmocje[Skupaj$obmocje == "Norway"] <- "Norveška"
-Skupaj$obmocje[Skupaj$obmocje == "Switzerland"] <- "Švica"
-Skupaj$obmocje[Skupaj$obmocje == "United Kingdom"] <- "Združeno kraljestvo"
-
-Skupaj <- type.convert(Skupaj, na.strings = ":", as.is = 0)
-Skupaj <- as.data.frame(Skupaj)
-Skupaj[is.na(Skupaj)] <- 0
-
-################################################################################################################################################################
-Zdrava <- read_csv("podatki/Zdrava_leta/podatki2.csv", na=",", locale=locale(encoding="Windows-1250"),
-                   col_types = cols(.default = col_guess(), 
-                                    UNIT = col_skip(), 
-                                    FlagandFootnotes = col_skip(),
-                                    INDIC_HE = col_skip()
-                   ))
-
-Zdrava <- Zdrava %>% relocate(obmocje = GEO, leto = TIME, spol = SEX)
-class(Zdrava$"leto") = "double"
-
-Zdrava$obmocje[Zdrava$obmocje == "European Union - 28 countries (2013-2020)"] <- "Evropska unija"
-Zdrava$obmocje[Zdrava$obmocje == "Belgium"] <- "Belgija"
-Zdrava$obmocje[Zdrava$obmocje == "Bulgaria"] <- "Bulgarija"
-Zdrava$obmocje[Zdrava$obmocje == "Czechia"] <- "Češka"
-Zdrava$obmocje[Zdrava$obmocje == "Denmark"] <- "Danska"
-Zdrava$obmocje[Zdrava$obmocje == "Germany (until 1990 former territory of the FRG)"] <- "Nemčija"
-Zdrava$obmocje[Zdrava$obmocje == "Estonia"] <- "Estonija"
-Zdrava$obmocje[Zdrava$obmocje == "Ireland"] <- "Irska"
-Zdrava$obmocje[Zdrava$obmocje == "Greece"] <- "Grčija"
-Zdrava$obmocje[Zdrava$obmocje == "Spain"] <- "Španija"
-Zdrava$obmocje[Zdrava$obmocje == "France"] <- "Francija" 
-Zdrava$obmocje[Zdrava$obmocje == "Croatia"] <- "Hrvaška"
-Zdrava$obmocje[Zdrava$obmocje == "Italy"] <- "Italija"
-Zdrava$obmocje[Zdrava$obmocje == "Cyprus"] <- "Ciper"
-Zdrava$obmocje[Zdrava$obmocje == "Latvia"] <- "Latvija"
-Zdrava$obmocje[Zdrava$obmocje == "Lithuania"] <- "Litva"
-Zdrava$obmocje[Zdrava$obmocje == "Luxembourg"] <- "Luksemburg"
-Zdrava$obmocje[Zdrava$obmocje == "Hungary"] <- "Madžarska"
-Zdrava$obmocje[Zdrava$obmocje == "Netherlands"] <- "Nizozemska"
-Zdrava$obmocje[Zdrava$obmocje == "Austria"] <- "Avstrija"
-Zdrava$obmocje[Zdrava$obmocje == "Poland"] <- "Poljska"
-Zdrava$obmocje[Zdrava$obmocje == "Portugal"] <- "Portugalska"
-Zdrava$obmocje[Zdrava$obmocje == "Romania"] <- "Romunija"
-Zdrava$obmocje[Zdrava$obmocje == "Slovenia"] <- "Slovenija"
-Zdrava$obmocje[Zdrava$obmocje == "Slovakia"] <- "Slovaška"
-Zdrava$obmocje[Zdrava$obmocje == "Finland"] <- "Finska"
-Zdrava$obmocje[Zdrava$obmocje == "Sweden"] <- "Švedska"
-Zdrava$obmocje[Zdrava$obmocje == "Iceland"] <- "Islandija"
-Zdrava$obmocje[Zdrava$obmocje == "Norway"] <- "Norveška"
-Zdrava$obmocje[Zdrava$obmocje == "Switzerland"] <- "Švica"
-Zdrava$obmocje[Zdrava$obmocje == "United Kingdom"] <- "Združeno kraljestvo"
-
-Zdrava.z <- Zdrava %>% filter(grepl("Females", spol)) 
-Zdrava.z <- subset(Zdrava.z, select = -c(spol) ) 
-names(Zdrava.z)[names(Zdrava.z) == "Value"] <- "pojav.zdr.tezav.pri.z"
-Zdrava.m <- Zdrava  %>% filter(grepl("Males", spol)) 
-Zdrava.m <- subset(Zdrava.m, select = -c(spol) )
-names(Zdrava.m)[names(Zdrava.m) == "Value"] <- "pojav.zdr.tezav.pri.m"
-Zdrava.s <- Zdrava  %>% filter(grepl("Total", spol)) 
-Zdrava.s <- subset(Zdrava.s, select = -c(spol) )
-names(Zdrava.s)[names(Zdrava.s) == "Value"] <- "pojav.zdr.tezav.skupaj"
-
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-Postelje.v.bolnišnicah <- read_tsv("podatki/Postelje_v_bolnišnicah/postelje.tsv", na=",", locale=locale(encoding="Windows-1250"))
+Postelje.v.bolnišnicah <- read_tsv("/Users/ianlampic/Desktop/APPR-2021-22/podatki/Postelje_v_bolnišnicah/postelje.tsv", na=",", locale=locale(encoding="Windows-1250"))
 Postelje.v.bolnišnicah <- Postelje.v.bolnišnicah  %>% relocate(obmocje = GEOE)
 Postelje.v.bolnišnicah <- pivot_longer(Postelje.v.bolnišnicah, !obmocje, names_to = "leto", values_to = "število.postelj")
 
@@ -237,17 +145,50 @@ Postelje.v.bolnišnicah$število.postelj <- as.integer(Postelje.v.bolnišnicah$�
 Postelje.v.bolnišnicah <- Postelje.v.bolnišnicah %>% replace_na(list(število.postelj = 0))
 
 class(Postelje.v.bolnišnicah$"leto") = "integer"
-postelje.in.tezave <- left_join(Postelje.v.bolnišnicah, Zdrava.z, by=c("obmocje","leto"))
-postelje.in.tezave <- left_join(postelje.in.tezave, Zdrava.m, by=c("obmocje","leto"))
-postelje.in.tezave <- left_join(postelje.in.tezave, Zdrava.s, by=c("obmocje","leto"))
 
-postelje.in.tezave <- type.convert(postelje.in.tezave, na.strings = ":", as.is = 0)
-postelje.in.tezave <- as.data.frame(postelje.in.tezave)
-postelje.in.tezave[is.na(postelje.in.tezave)] <- 0
+Skupaj <- rbind(vzroki.prebivalstvo.s, vzroki.prebivalstvo.z, vzroki.prebivalstvo.m)
+
+Skupaj$obmocje[Skupaj$obmocje == "European Union - 28 countries (2013-2020)"] <- "Evropska unija"
+Skupaj$obmocje[Skupaj$obmocje == "Belgium"] <- "Belgija"
+Skupaj$obmocje[Skupaj$obmocje == "Bulgaria"] <- "Bulgarija"
+Skupaj$obmocje[Skupaj$obmocje == "Czechia"] <- "Češka"
+Skupaj$obmocje[Skupaj$obmocje == "Denmark"] <- "Danska"
+Skupaj$obmocje[Skupaj$obmocje == "Germany (until 1990 former territory of the FRG)"] <- "Nemčija"
+Skupaj$obmocje[Skupaj$obmocje == "Estonia"] <- "Estonija"
+Skupaj$obmocje[Skupaj$obmocje == "Ireland"] <- "Irska"
+Skupaj$obmocje[Skupaj$obmocje == "Greece"] <- "Grčija"
+Skupaj$obmocje[Skupaj$obmocje == "Spain"] <- "Španija"
+Skupaj$obmocje[Skupaj$obmocje == "France"] <- "Francija" 
+Skupaj$obmocje[Skupaj$obmocje == "Croatia"] <- "Hrvaška"
+Skupaj$obmocje[Skupaj$obmocje == "Italy"] <- "Italija"
+Skupaj$obmocje[Skupaj$obmocje == "Cyprus"] <- "Ciper"
+Skupaj$obmocje[Skupaj$obmocje == "Latvia"] <- "Latvija"
+Skupaj$obmocje[Skupaj$obmocje == "Lithuania"] <- "Litva"
+Skupaj$obmocje[Skupaj$obmocje == "Luxembourg"] <- "Luksemburg"
+Skupaj$obmocje[Skupaj$obmocje == "Hungary"] <- "Madžarska"
+Skupaj$obmocje[Skupaj$obmocje == "Netherlands"] <- "Nizozemska"
+Skupaj$obmocje[Skupaj$obmocje == "Austria"] <- "Avstrija"
+Skupaj$obmocje[Skupaj$obmocje == "Poland"] <- "Poljska"
+Skupaj$obmocje[Skupaj$obmocje == "Portugal"] <- "Portugalska"
+Skupaj$obmocje[Skupaj$obmocje == "Romania"] <- "Romunija"
+Skupaj$obmocje[Skupaj$obmocje == "Slovenia"] <- "Slovenija"
+Skupaj$obmocje[Skupaj$obmocje == "Slovakia"] <- "Slovaška"
+Skupaj$obmocje[Skupaj$obmocje == "Finland"] <- "Finska"
+Skupaj$obmocje[Skupaj$obmocje == "Sweden"] <- "Švedska"
+Skupaj$obmocje[Skupaj$obmocje == "Iceland"] <- "Islandija"
+Skupaj$obmocje[Skupaj$obmocje == "Norway"] <- "Norveška"
+Skupaj$obmocje[Skupaj$obmocje == "Switzerland"] <- "Švica"
+Skupaj$obmocje[Skupaj$obmocje == "United Kingdom"] <- "Združeno kraljestvo"
+
+Skupaj <- left_join(Skupaj, Postelje.v.bolnišnicah, by=c("obmocje", "leto"))
+
+Skupaj <- type.convert(Skupaj, na.strings = ":", as.is = 0)
+Skupaj <- as.data.frame(Skupaj)
+Skupaj[is.na(Skupaj)] <- 0
 
 ################################################################################################################################################################
 
-Nesreče.v.službah <- read_tsv("podatki/Nesreče/nesreče.tsv", na=",", locale=locale(encoding="Windows-1250"))
+Nesreče.v.službah <- read_tsv("/Users/ianlampic/Desktop/APPR-2021-22/podatki/Nesreče/nesreče.tsv", na=",", locale=locale(encoding="Windows-1250"))
 Nesreče.v.službah <- Nesreče.v.službah  %>% relocate(obmocje = GEOE)
 Nesreče.v.službah$"2013" <- as.character(Nesreče.v.službah$"2013") 
 Nesreče.v.službah <- pivot_longer(Nesreče.v.službah, !obmocje, names_to = "leto", values_to = "število.nesreč")
@@ -338,6 +279,62 @@ nesrece.prebivalstvo$število.nesreč <- gsub("e","",as.character(nesrece.prebiv
 nesrece.prebivalstvo$število.nesreč <- gsub("b","",as.character(nesrece.prebivalstvo$število.nesreč))
 nesrece.prebivalstvo$število.nesreč <- gsub("p","",as.character(nesrece.prebivalstvo$število.nesreč))
 
+Zdrava <- read_csv("/Users/ianlampic/Desktop/APPR-2021-22/podatki/Zdrava_leta/podatki2.csv", na=",", locale=locale(encoding="Windows-1250"),
+                   col_types = cols(.default = col_guess(), 
+                                    UNIT = col_skip(), 
+                                    FlagandFootnotes = col_skip(),
+                                    INDIC_HE = col_skip()
+                   ))
+
+Zdrava <- Zdrava %>% relocate(obmocje = GEO, leto = TIME, spol = SEX)
+class(Zdrava$"leto") = "double"
+
+Zdrava$obmocje[Zdrava$obmocje == "European Union - 28 countries (2013-2020)"] <- "Evropska unija"
+Zdrava$obmocje[Zdrava$obmocje == "Belgium"] <- "Belgija"
+Zdrava$obmocje[Zdrava$obmocje == "Bulgaria"] <- "Bulgarija"
+Zdrava$obmocje[Zdrava$obmocje == "Czechia"] <- "Češka"
+Zdrava$obmocje[Zdrava$obmocje == "Denmark"] <- "Danska"
+Zdrava$obmocje[Zdrava$obmocje == "Germany (until 1990 former territory of the FRG)"] <- "Nemčija"
+Zdrava$obmocje[Zdrava$obmocje == "Estonia"] <- "Estonija"
+Zdrava$obmocje[Zdrava$obmocje == "Ireland"] <- "Irska"
+Zdrava$obmocje[Zdrava$obmocje == "Greece"] <- "Grčija"
+Zdrava$obmocje[Zdrava$obmocje == "Spain"] <- "Španija"
+Zdrava$obmocje[Zdrava$obmocje == "France"] <- "Francija" 
+Zdrava$obmocje[Zdrava$obmocje == "Croatia"] <- "Hrvaška"
+Zdrava$obmocje[Zdrava$obmocje == "Italy"] <- "Italija"
+Zdrava$obmocje[Zdrava$obmocje == "Cyprus"] <- "Ciper"
+Zdrava$obmocje[Zdrava$obmocje == "Latvia"] <- "Latvija"
+Zdrava$obmocje[Zdrava$obmocje == "Lithuania"] <- "Litva"
+Zdrava$obmocje[Zdrava$obmocje == "Luxembourg"] <- "Luksemburg"
+Zdrava$obmocje[Zdrava$obmocje == "Hungary"] <- "Madžarska"
+Zdrava$obmocje[Zdrava$obmocje == "Netherlands"] <- "Nizozemska"
+Zdrava$obmocje[Zdrava$obmocje == "Austria"] <- "Avstrija"
+Zdrava$obmocje[Zdrava$obmocje == "Poland"] <- "Poljska"
+Zdrava$obmocje[Zdrava$obmocje == "Portugal"] <- "Portugalska"
+Zdrava$obmocje[Zdrava$obmocje == "Romania"] <- "Romunija"
+Zdrava$obmocje[Zdrava$obmocje == "Slovenia"] <- "Slovenija"
+Zdrava$obmocje[Zdrava$obmocje == "Slovakia"] <- "Slovaška"
+Zdrava$obmocje[Zdrava$obmocje == "Finland"] <- "Finska"
+Zdrava$obmocje[Zdrava$obmocje == "Sweden"] <- "Švedska"
+Zdrava$obmocje[Zdrava$obmocje == "Iceland"] <- "Islandija"
+Zdrava$obmocje[Zdrava$obmocje == "Norway"] <- "Norveška"
+Zdrava$obmocje[Zdrava$obmocje == "Switzerland"] <- "Švica"
+Zdrava$obmocje[Zdrava$obmocje == "United Kingdom"] <- "Združeno kraljestvo"
+
+Zdrava.z <- Zdrava %>% filter(grepl("Females", spol)) 
+Zdrava.z <- subset(Zdrava.z, select = -c(spol) ) 
+names(Zdrava.z)[names(Zdrava.z) == "Value"] <- "pojav.zdr.tezav.pri.z"
+Zdrava.m <- Zdrava  %>% filter(grepl("Males", spol)) 
+Zdrava.m <- subset(Zdrava.m, select = -c(spol) )
+names(Zdrava.m)[names(Zdrava.m) == "Value"] <- "pojav.zdr.tezav.pri.m"
+Zdrava.s <- Zdrava  %>% filter(grepl("Total", spol)) 
+Zdrava.s <- subset(Zdrava.s, select = -c(spol) )
+names(Zdrava.s)[names(Zdrava.s) == "Value"] <- "pojav.zdr.tezav.skupaj"
+
+nesrece.prebivalstvo <- left_join(nesrece.prebivalstvo, Zdrava.z, by=c("obmocje","leto"))
+nesrece.prebivalstvo <- left_join(nesrece.prebivalstvo, Zdrava.m, by=c("obmocje","leto"))
+nesrece.prebivalstvo <- left_join(nesrece.prebivalstvo, Zdrava.s, by=c("obmocje","leto"))
+
 pr <- unlist(nesrece.prebivalstvo$stevilo.prebivalcev)
 nesrece.prebivalstvo$stevilo.prebivalcev <-  as.numeric(gsub(",", "", pr))
 
@@ -346,6 +343,24 @@ nesrece.prebivalstvo$število.nesreč <-  as.numeric(gsub(",", "", n))
 nesrece.prebivalstvo <- type.convert(nesrece.prebivalstvo, na.strings = ":", as.is = 0)
 nesrece.prebivalstvo$število.nesreč <- as.integer(nesrece.prebivalstvo$število.nesreč)
 nesrece.prebivalstvo <- nesrece.prebivalstvo %>% replace_na(list(število.nesreč = 0))
+
+z <- unlist(nesrece.prebivalstvo$pojav.zdr.tezav.pri.z)
+nesrece.prebivalstvo$pojav.zdr.tezav.pri.z <-  as.numeric(gsub(",", "", n))
+nesrece.prebivalstvo <- type.convert(nesrece.prebivalstvo, na.strings = ":", as.is = 0)
+nesrece.prebivalstvo$pojav.zdr.tezav.pri.z <- as.integer(nesrece.prebivalstvo$pojav.zdr.tezav.pri.z)
+nesrece.prebivalstvo <- nesrece.prebivalstvo %>% replace_na(list(pojav.zdr.tezav.pri.z = 0))
+
+m <- unlist(nesrece.prebivalstvo$pojav.zdr.tezav.pri.m)
+nesrece.prebivalstvo$pojav.zdr.tezav.pri.m <-  as.numeric(gsub(",", "", n))
+nesrece.prebivalstvo <- type.convert(nesrece.prebivalstvo, na.strings = ":", as.is = 0)
+nesrece.prebivalstvo$pojav.zdr.tezav.pri.m <- as.integer(nesrece.prebivalstvo$pojav.zdr.tezav.pri.m)
+nesrece.prebivalstvo <- nesrece.prebivalstvo %>% replace_na(list(pojav.zdr.tezav.pri.m = 0))
+
+s <- unlist(nesrece.prebivalstvo$pojav.zdr.tezav.skupaj)
+nesrece.prebivalstvo$pojav.zdr.tezav.skupaj <-  as.numeric(gsub(",", "", n))
+nesrece.prebivalstvo <- type.convert(nesrece.prebivalstvo, na.strings = ":", as.is = 0)
+nesrece.prebivalstvo$pojav.zdr.tezav.skupaj <- as.integer(nesrece.prebivalstvo$pojav.zdr.tezav.skupaj)
+nesrece.prebivalstvo <- nesrece.prebivalstvo %>% replace_na(list(pojav.zdr.tezav.skupaj = 0))
 
 ################################################################################################################################################################
 
