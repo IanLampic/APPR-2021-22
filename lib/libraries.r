@@ -10,6 +10,12 @@ library(httr)
 library(XML)
 library(stringr)
 library(tidyverse)
+library(sp)
+library(rgdal)
+library(raster)
+library(rgeos)
+library(cluster)
+library(scales)
 options(gsubfn.engine="R")
 
 # Uvozimo funkcije za pobiranje in uvoz zemljevida.
