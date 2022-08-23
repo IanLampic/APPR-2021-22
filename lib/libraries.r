@@ -2,7 +2,6 @@ library(knitr)
 library(rvest)
 library(gsubfn)
 library(tidyr)
-library(tmap)
 library(shiny)
 library(readr)
 library(dplyr)
@@ -16,8 +15,13 @@ library(raster)
 library(rgeos)
 library(cluster)
 library(scales)
+library(ggalt)
+library(ggplot2)
+library(sf)
+
+
 options(gsubfn.engine="R")
 
 # Uvozimo funkcije za pobiranje in uvoz zemljevida.
-source("lib/uvozi.zemljevid.r", encoding="UTF-8")
+source("/Users/ianlampic/Desktop/APPR-2021-22/lib/uvozi.zemljevid.r", encoding="UTF-8")
 

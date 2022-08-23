@@ -33,14 +33,14 @@ obrisi = function(podatki, hc = TRUE, od = 2, do = NULL) {
 
 obrisi.povprecje = function(k.obrisi) {
   k.obrisi.povprecje = k.obrisi %>%
-    group_by(k) %>%
-    summarize(obrisi = mean(obrisi))
+    dplyr::group_by(k) %>%
+    dplyr::summarize(obrisi = mean(obrisi))
 }
 
 obrisi.k = function(k.obrisi) {
   obrisi.povprecje(k.obrisi) %>%
     filter(obrisi == max(obrisi)) %>%
-    summarize(k = min(k)) %>%
+    dplyr::summarize(k = min(k)) %>%
     unlist() %>%
     as.character() %>%
     as.integer()
@@ -75,24 +75,26 @@ diagram.obrisi = function(k.obrisi) {
     theme_classic()
 }
 
-bolezni <- Skupaj %>% select(leto, obmocje, spol, vzrok, ljudje.z.boleznijo) %>%
+bolezni <- analiza %>% dplyr::select(leto, obmocje, spol, vzrok, ljudje.z.boleznijo) 
+  bolezni[is.na(bolezni)] = 0
+  bolezni <- bolezni %>%
   filter(leto %in% c(2019)) %>% filter(spol %in% c('Skupaj')) %>%
-  select(-leto) %>%
+  dplyr::select(-leto) %>%
   pivot_wider(
     names_from = vzrok,
     values_from = ljudje.z.boleznijo
   )
 
 drzave <- bolezni[, 1] %>% unlist()
-razdalje <- bolezni[,-1] %>% dist()
+razdalje <- bolezni[,c(-1,-2)] %>% dist()
 dendrogram = razdalje %>% hclust(method = "ward.D")
-dendrogramcek <- plot(
-  dendrogram,
-  labels = drzave,
-  ylab = 'višina',
-  main = NULL
-)
-
+#dendrogram <- plot(
+#  dendrogram,
+#  labels = drzave,
+#  ylab = 'višina',
+#  main = NULL
+#)
+#Drevo
 hc.kolena = function(dendrogram, od = 1, do = NULL, eps = 0.5) {
   # število primerov in nastavitev parametra do
   n = length(dendrogram$height) + 1
@@ -153,7 +155,8 @@ diagram.kolena = function(k.visina) {
     ylab("razdalja pri združevanju skupin") +
     theme_classic()
 }
-diagram.kolena(r)
+#Kolena
+ana1 <- diagram.kolena(r)
 
 diagram.skupine = function(podatki, oznake, skupine, k) {
   podatki = podatki %>%
@@ -181,8 +184,6 @@ diagram.skupine = function(podatki, oznake, skupine, k) {
 }
 
 
-#k-ti voditelji
-
 b <- transform(bolezni, Nekn = as.numeric(unlist(bolezni[,3])),
                Mal = as.numeric(unlist(bolezni[,4])),
                Nem = as.numeric(unlist(bolezni[,5])),
@@ -198,20 +199,239 @@ b <- transform(bolezni, Nekn = as.numeric(unlist(bolezni[,3])),
                Nos = as.numeric(unlist(bolezni[,15])),
                Nekp = as.numeric(unlist(bolezni[,16])),
                Pri = as.numeric(unlist(bolezni[,17])),
-               Sim = as.numeric(unlist(bolezni[,18]))) %>% select(Mal, Nem, End, Duš, Bolž, Bolc, Bold, Bolp, Bolk, Bolm, Bolg, Nos, Nekp, Pri, Sim)
+               Sim = as.numeric(unlist(bolezni[,18]))) %>% dplyr::select(Nekn,Mal, Nem, End, Duš, Bolž, Bolc, Bold, Bolp, Bolk, Bolm, Bolg, Nos, Nekp, Pri, Sim)
 
 skupine = b %>%
-  kmeans(centers = 3) %>%
+  kmeans(centers = 2) %>%
   getElement("cluster") %>%
   as.ordered()
 
-print(skupine)
+
+
 r.hc = bolezni[, -c(1,2)] %>% obrisi(hc = TRUE)
-r.km = bolezni[, -c(1,2)] %>% obrisi(hc = FALSE)
 
-diagram.obrisi(r.hc)
-diagram.obrisi(r.km)
+ana2 <- diagram.obrisi(r.hc)
+#Maksimalno povprečje obrisov
+drzave.x.y =
+  as_tibble(razdalje %>% cmdscale(k = 2)) %>%
+  bind_cols(drzave) %>%
+  dplyr::select(obmocje = ...3, x = V1, y = V2)
 
-#Optimalno število skupin je torej 2 ali 4/5
+k = obrisi.k(r.hc)
+skupine = bolezni[, c(-1,-2)] %>%
+  dist() %>%
+  hclust(method = "ward.D") %>%
+  cutree(k = k) %>%
+  as.ordered()
+ana3 <- diagram.skupine(drzave.x.y, drzave.x.y$obmocje, skupine, k)
 
+set.seed(50)
+skupine = bolezni[, c(-1,-2)] %>%
+  kmeans(centers = 2) %>%
+  getElement("cluster") %>%
+  as.ordered()
+skup <- diagram.skupine(drzave.x.y, drzave.x.y$obmocje, skupine, 2)
+
+#Enako kot zgoraj
+###########################################################################
+download.file(url='https://kt.ijs.si/~ljupco/lectures/appr/zemljevidi/svet/TM_WORLD_BORDERS-0.3.shp',
+              destfile='TM_WORLD_BORDERS-0.3.shp', method='curl')
+download.file(url='https://kt.ijs.si/~ljupco/lectures/appr/zemljevidi/svet/TM_WORLD_BORDERS-0.3.dbf',
+              destfile='TM_WORLD_BORDERS-0.3.dbf', method='curl')
+download.file(url='https://kt.ijs.si/~ljupco/lectures/appr/zemljevidi/svet/TM_WORLD_BORDERS-0.3.shx',
+              destfile='TM_WORLD_BORDERS-0.3.shx', method='curl')
+svet.sp <- readOGR(getwd(), "TM_WORLD_BORDERS-0.3", verbose=FALSE)
+svet.sp = gBuffer(svet.sp, byid = TRUE, width = 0)
+
+svet.map <- st_as_sf(x = svet.sp, coords = c("longitude", "latitude"), crs = "+proj=longlat +datum=WGS84")
+svet.centroidi = read_csv("podatki/drzave-centroidi.csv")
+evropske.drzave = tibble(
+  drzava = c(
+    "Albania", "Andorra", "Armenia",
+    "Austria", "Azerbaijan", "Belarus",
+    "Belgium", "Bosnia and Herzegovina",
+    "Bulgaria", "Croatia", "Cyprus",
+    "Czechia", "Denmark", "Estonia",
+    "Finland", "France", "Georgia",
+    "Germany", "Greece", "Hungary",
+    "Iceland", "Ireland", "Italy",
+    "Kazakhstan", "Latvia",
+    "Liechtenstein", "Lithuania",
+    "Luxembourg", "Malta", "Moldova",
+    "Monaco", "Montenegro",
+    "Netherlands", "North Macedonia",
+    "Norway", "Poland", "Portugal",
+    "Romania", "Russia", "San Marino",
+    "Serbia", "Slovakia", "Slovenia",
+    "Spain", "Sweden", "Switzerland",
+    "Turkey", "Ukraine", "United Kingdom",
+    "Holy See (Vatican City)"
+  )
+)
+
+
+evropa.izsek = as(extent(-25, 60, 30, 75), "SpatialPolygons")
+sp::proj4string(evropa.izsek) <- sp::proj4string(svet.sp)
+
+evropske.drzave = tibble(
+  drzava = c(
+    "Albania", "Andorra", "Armenia",
+    "Austria", "Azerbaijan", "Belarus",
+    "Belgium", "Bosnia and Herzegovina",
+    "Bulgaria", "Croatia", "Cyprus",
+    "Czechia", "Denmark", "Estonia",
+    "Finland", "France", "Georgia",
+    "Germany", "Greece", "Hungary",
+    "Iceland", "Ireland", "Italy",
+    "Kazakhstan", "Latvia",
+    "Liechtenstein", "Lithuania",
+    "Luxembourg", "Malta", "Moldova",
+    "Monaco", "Montenegro",
+    "Netherlands", "North Macedonia",
+    "Norway", "Poland", "Portugal",
+    "Romania", "Russia", "San Marino",
+    "Serbia", "Slovakia", "Slovenia",
+    "Spain", "Sweden", "Switzerland",
+    "Turkey", "Ukraine", "United Kingdom",
+    "Holy See (Vatican City)"
+  )
+)
+
+# Evropa se po zemljepisni dolžini razteza
+# od -25 do 60, po širini pa od 30 do 75
+evropa.izsek = as(extent(-25, 60, 30, 75), "SpatialPolygons")
+sp::proj4string(evropa.izsek) <- sp::proj4string(svet.sp)
+colnames(evropske.drzave)[1] <- "NAME"
+evropa.poligoni = svet.sp %>% crop(evropa.izsek) %>% fortify() %>% tibble() %>%
+  left_join(
+    rownames_to_column(svet.map),
+    by = c("id" = "rowname")
+  )
+colnames(svet.centroidi)[1] <- "NAME"
+evropa.centroidi = evropske.drzave %>%
+  left_join(
+    svet.centroidi,
+    by = "NAME"
+  )
+
+
+colnames(evropa.poligoni)[12] <- "drzava"
+colnames(evropa.centroidi)[1] <- "drzava"
+
+prostorski.diagram.skupine = function(drzave, skupine, k) {
+  drzave %>%
+    bind_cols(skupine) %>%
+    dplyr::select(drzava = ...1, skupina = ...2) %>%
+    left_join(
+      evropa.poligoni,
+      by = "drzava"
+    ) %>%
+    ggplot() +
+    geom_polygon(
+      mapping = aes(long, lat, group = group, fill = skupina),
+      color = "grey"
+    ) +
+    scale_fill_brewer() +
+    coord_map() +
+    xlim(-25, 50) +
+    theme_classic() +
+    theme(
+      axis.line = element_blank(),
+      axis.ticks = element_blank(),
+      axis.text = element_blank(),
+      axis.title = element_blank()
+    )
+}
+
+set.seed(42)
+skupine = bolezni[, c(-1,-2)] %>%
+  kmeans(centers = 2) %>%
+  getElement("cluster") %>%
+  as.ordered()
+
+ana4 <- prostorski.diagram.skupine(drzave, skupine, 2)
+
+
+
+podatki.ucni <- zadnja.n %>% filter(spol %in% c('Skupaj')) %>%
+  filter(leto == 2017) %>% filter(vzrok %in% c('Nekn')) %>%
+  dplyr::select(-leto,-spol,-stevilo.prebivalcev.y,-pojav.zdr.tezav.pri.z,-pojav.zdr.tezav.pri.m, -vzrok,-ljudje.z.boleznijo)
+
+nesss <- unlist(podatki.ucni$stevilo.nesrec)
+podatki.ucni$stevilo.nesrec <-  as.numeric(gsub(",", "", nesss))
+podatki.ucni <- podatki.ucni[-c(1,3,4,11,13,16,22,30,20),]
+g <- ggplot(podatki.ucni, aes(x=potrosnja, y=ljudje.z.boleznijo.skupno)) + geom_point()
+ana5 <- g + geom_smooth(method="lm", fullrange=TRUE) + xlim(2000,6500)
+############################################################################
+# V modelu linearne regresije danim s formulo potrosnja ~ ljudje.z.boleznijo.skupno.x + stevilo.nesrec + stevilo.prebivalcev.x 
+# želimo analizirati pomembnost napovednih spremeljivk. 
+# Katera napovedna spremenljivka ima največjo moč? ->stevilo prebivalcev in ljudje.z.boleznijo
+# (Pomagaš si lahko s kodo s predavanj.) 
+
+library(iml)
+library (tidyverse)
+
+X = podatki.ucni %>% dplyr::select(ljudje.z.boleznijo.skupno,stevilo.prebivalcev.x, stevilo.nesrec)
+podatki.ucni = podatki.ucni[c(-3,-8,-9,-15,-20,-22),]
+X = X[c(-3,-8,-9,-15,-20,-22),]
+model <- lm(data = podatki.ucni, formula =  potrosnja ~ ljudje.z.boleznijo.skupno + stevilo.nesrec + stevilo.prebivalcev.x)
+
+pfun = function(model, newdata) {
+  predict (model, newdata = newdata)
+}
+
+reg.pred = Predictor$new(
+  model,
+  data = X, y = podatki.ucni$potrosnja,
+  predict.fun = pfun
+)
+
+ana6 = FeatureImp$new(reg.pred, , loss = "mse")
+plot(ana6)
+###############################################################################################
+slo <- zadnja.n %>% filter(obmocje == "Slovenia")  %>% filter(spol %in% c("Skupaj"))  %>% filter(vzrok %in% c("Mal"))
+slo <- slo[,-c(1,6,5,9,10,11,12,13,14)]
+ness <- unlist(slo$stevilo.nesrec)
+slo$stevilo.nesrec <-  as.numeric(gsub(",", "", ness))
+slo[, c(2,4)] <- sapply(slo[, c(2,4)], as.numeric)
+class(slo$"pojav.zdr.tezav.skupaj") = "double"
+#slo <- slo[-c(1:4),]
+
+
+CAC <- slo[,4]
+CACs <- slo[,c(1,4)]
+#CACs %>% ggplot() +
+#  geom_line(
+#    mapping = aes(x = leto, y = pojav.zdr.tezav.skupaj),
+#    color = "navyblue"
+#  )
+library(ranger)
+Lag <- function(x, n){
+  (c(rep(NA, n), x)[1 : length(x)] )
+}
+naredi.df <- function(x){data.frame(CAC = x,
+                                    CAC1 = Lag(x, 1),
+                                    CAC2 = Lag(x, 2) ,
+                                    CAC3 = Lag(x, 3),
+                                    CAC4 = Lag(x, 4)
+)
+}
+df <- naredi.df(CAC$pojav.zdr.tezav.skupaj)
+model.bi = ranger(CAC ~ CAC1 + CAC2 + CAC3 + CAC4, data=df %>% drop_na())
+n <- nrow(df)
+for (i in 1:5){
+  df <- naredi.df(c(df$CAC, NA))
+  napoved = predict(model.bi,  data = df[n + i, ] )$predictions
+  df[n+i, 1] = napoved
+}
+
+napovedi = df[c(10,11,12,13,14), 1]
+CACs2 <- CACs
+CACs2[c(10,11,12,13,14),2] = napovedi
+CACs2[c(10,11,12,13,14),1] = c(2020, 2021, 2022, 2023, 2024)
+
+nap <- ggplot(CACs2) + geom_point(aes(x = leto, y = pojav.zdr.tezav.skupaj, colour = leto > 2019)) +
+  scale_colour_manual(name = 'Napovedi', values = setNames(c('red','navyblue'),c(T, F))) +
+  xlab('Leto') + ylab('Povprečna starost pojavitve hujših bolezni')
+ana7 <- nap
 

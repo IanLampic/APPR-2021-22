@@ -145,45 +145,48 @@ Postelje.v.bolnisnicah <- Postelje.v.bolnisnicah[!grepl("Montenegro" , Postelje.
 class(Postelje.v.bolnisnicah$"leto") = "integer"
 
 Skupaj <- rbind(vzroki.prebivalstvo.s, vzroki.prebivalstvo.z, vzroki.prebivalstvo.m)
+Skupaj2 <- left_join(Skupaj, Postelje.v.bolnisnicah, by=c("obmocje", "leto"))
 Skupaj <- left_join(Skupaj, tabela, by = c("leto" = "leto",  "obmocje" = "obmocje"))
-Skupaj <- left_join(Skupaj, Postelje.v.bolnisnicah, by=c("obmocje", "leto"))
 
 Skupaj$ljudje.z.boleznijo <-  as.numeric(gsub(",", ".", gsub("\\.", "", Skupaj$ljudje.z.boleznijo)))
 
-vsota.s <- Skupaj %>%
-  group_by(obmocje, leto) %>%
-  summarize(
+analiza <- Skupaj
+analiza$obmocje[analiza$obmocje  == "Germany (until 1990 former territory of the FRG)"] <- "Germany"
+
+vsota.s <- analiza %>% filter(spol %in% c("Skupaj")) %>%
+  dplyr::group_by(leto,obmocje) %>%
+  dplyr::summarise(
     ljudje.z.boleznijo.skupno = sum(ljudje.z.boleznijo, na.rm = TRUE)
   )
+Skupaj$obmocje[Skupaj$obmocje == "Germany (until 1990 former territory of the FRG)"] <- "Germany"
 Skupaj <- left_join(vsota.s, Skupaj, by=c("obmocje", "leto"))
+Skupaj2 <- left_join(Skupaj2, vsota.s, by=c("obmocje", "leto"))
+Skupaj2 <- left_join(Skupaj2, tabela, by=c("obmocje", "leto"))
+vsota.s <- left_join(vsota.s, tabela)
+vsota.s <- left_join(vsota.s, Prebivalstvo)
 
 ###
 #Mapping preden sem skrajsal imena drzav
-library(tmap)
 library(sf)
 library(rnaturalearth)
 library(rnaturalearthdata)
 library(rgeos)
 
-Skupaj$obmocje[Skupaj$obmocje == "Germany (until 1990 former territory of the FRG)"] <- "Germany"
-
 world <- ne_countries(scale = "medium", returnclass = "sf")
 Europe <- world[which(world$continent == "Europe"),]
-ggplot(Europe) +
-  geom_sf() +
-  coord_sf(xlim = c(-25,50), ylim = c(35,70), expand = FALSE) +
-  aes(fill = 'blue')
+Skupaj$obmocje[Skupaj$obmocje == "Czechia"] <- "Czech Republic"
 
 lvls <-(Europe$sovereignt)
 primerjava <- data.frame(obmocje = lvls) %>% left_join(Skupaj, by = "obmocje")
+Novosku <- Skupaj %>% filter(spol %in% c("Skupaj")) %>% filter(leto %in% c(2016)) %>% filter(vzrok %in% c("Nos"))
 ###
 
 Skupaj$obmocje[Skupaj$obmocje == "European Union - 28 countries (2013-2020)"] <- "EU"
 Skupaj$obmocje[Skupaj$obmocje == "Belgium"] <- "BE"
 Skupaj$obmocje[Skupaj$obmocje == "Bulgaria"] <- "BG"
-Skupaj$obmocje[Skupaj$obmocje == "Czechia"] <- "CZ"
+Skupaj$obmocje[Skupaj$obmocje == "Czech Republic"] <- "CZ"
 Skupaj$obmocje[Skupaj$obmocje == "Denmark"] <- "DK"
-Skupaj$obmocje[Skupaj$obmocje == "Germany (until 1990 former territory of the FRG)"] <- "DE"
+Skupaj$obmocje[Skupaj$obmocje == "Germany"] <- "DE"
 Skupaj$obmocje[Skupaj$obmocje == "Estonia"] <- "EE"
 Skupaj$obmocje[Skupaj$obmocje == "Ireland"] <- "IE"
 Skupaj$obmocje[Skupaj$obmocje == "Greece"] <- "GR"
@@ -210,11 +213,13 @@ Skupaj$obmocje[Skupaj$obmocje == "Norway"] <- "NO"
 Skupaj$obmocje[Skupaj$obmocje == "Switzerland"] <- "CH"
 Skupaj$obmocje[Skupaj$obmocje == "United Kingdom"] <- "GB"
 
+ana <- unlist(analiza$stevilo.prebivalcev)
+analiza$stevilo.prebivalcev <- as.numeric(gsub(",","",ana))
+
 pr <- unlist(Skupaj$stevilo.prebivalcev)
 Skupaj$stevilo.prebivalcev <-  as.numeric(gsub(",", "", pr))
 
-samoSlo <- Skupaj[Skupaj$obmocje %in% c("SI"), ]
-
+Koncna <- Skupaj %>% filter(spol %in% c("Skupaj"))
 ################################################################################################################################################################
 
 Nesrece.v.sluzbah <- read_tsv("/Users/ianlampic/Desktop/APPR-2021-22/podatki/Nesrece/nesrece.tsv", na=",", locale=locale(encoding="Windows-1250"))
@@ -267,6 +272,8 @@ names(Zdrava.s)[names(Zdrava.s) == "Value"] <- "pojav.zdr.tezav.skupaj"
 nesrece.prebivalstvo <- left_join(nesrece.prebivalstvo, Zdrava.z, by=c("obmocje","leto"))
 nesrece.prebivalstvo <- left_join(nesrece.prebivalstvo, Zdrava.m, by=c("obmocje","leto"))
 nesrece.prebivalstvo <- left_join(nesrece.prebivalstvo, Zdrava.s, by=c("obmocje","leto"))
+
+zadnja.n <- left_join(nesrece.prebivalstvo, Skupaj2, by = c('leto', 'obmocje'))
 
 nesrece.prebivalstvo$obmocje[nesrece.prebivalstvo$obmocje == "European Union - 28 countries (2013-2020)"] <- "EU"
 nesrece.prebivalstvo$obmocje[nesrece.prebivalstvo$obmocje == "Belgium"] <- "BE"
