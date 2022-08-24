@@ -310,8 +310,9 @@ nesrece.prebivalstvo$obmocje[nesrece.prebivalstvo$obmocje == "United Kingdom"] <
 nes <- unlist(nesrece.prebivalstvo$stevilo.nesrec)
 nesrece.prebivalstvo$stevilo.nesrec <-  as.numeric(gsub(",", "", nes))
 
-
-
-
+class(nesrece.prebivalstvo$pojav.zdr.tezav.pri.m) <- "double"
+class(nesrece.prebivalstvo$pojav.zdr.tezav.pri.z) <- "double"
+class(nesrece.prebivalstvo$pojav.zdr.tezav.skupaj) <- "double"
+nesrece.prebivalstvo2 <- janitor::clean_names(nesrece.prebivalstvo)
 
 

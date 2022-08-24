@@ -252,3 +252,4 @@
     ) +
     scale_fill_gradient(low="white", high="blue") + ggtitle('Razmerje med vsoto ljudi z boleznijo in stevilom prebivalstva') + labs(fill = "")
 
+class(nesrece.prebivalstvo$pojav.zdr.tezav.skupaj) <- "double"

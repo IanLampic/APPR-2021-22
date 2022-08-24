@@ -29,7 +29,7 @@ Osrednja tema naloge je zdravstveno stanje v Evropi. Vključuje podatke o povpre
 source("/Users/ianlampic/Desktop/APPR-2021-22/uvoz/uvoz.r", encoding="UTF-8")
 ```
 
-Podatke se pridobil iz Eurostata v obliki csv in tsv, ter Wikipedije. Združil sem jih v dve tabeli, in sicer v tabelo poimenovano **Koncna** in tabelo z imenom **nesrece.prebivalstvo**. V prvi so podatki o številu ljudi z boleznimi, razdeljeno po kategorijah, vsota bolezni po letih in državah, število prebivalstva in potrosnja. Razdeljeni so po letih, državah in pa spolu. V drugi so prikazani podatki o številu nesreč, številu prebivalstva, ter povprečno leto, ko se pričenjajo pojavljati hujše zdravstvene težave, razdeljeno na povprečje moških, žensk in pa skupno. Tudi tukaj so podatki razdeljeni po letih in državah.
+Podatke sem pridobil iz Eurostata v obliki csv in tsv, ter Wikipedije. Združil sem jih v dve tabeli, in sicer v tabelo poimenovano **Koncna** in tabelo z imenom **nesrece.prebivalstvo**. V prvi so podatki o številu ljudi z boleznimi, ki so razdeljene po kategorijah, vsota vseh ljudi z boleznijo po letih in državah, število prebivalstva in potrošnja. Razdeljeni so po letih, državah in pa spolu. V drugi so prikazani podatki o številu nesreč, številu prebivalstva in povprečno leto, ko se pričenjajo pojavljati hujše zdravstvene težave, razdeljeni na povprečje moških, žensk in pa skupno. Tudi tukaj so podatki razdeljeni po letih in državah.
 
 ***
 
@@ -40,20 +40,20 @@ source("/Users/ianlampic/Desktop/APPR-2021-22/vizualizacija/vizualizacija.r", en
 ```
 
 ### Število ljudi z boleznimi in število nesreč
-V prvem delu sem se osredotočil na podatke o številu ljudi z boleznimi v Sloveniji in pa po Evropi. Prvi graf predstavlja bolezni, ki so razdeljene po ICD-10-CM lestvici, po Sloveniji od leta 2011 do 2019. Opazimo, da prevladujeta dve skupini; bolezni cirkulacijskega sistema označeno z **Bolz** in maligne neoplazme označeno z **Mal**. Najmanj bolezni je v povezavi z nosečnostjo, porodom in puerperijem. 
+V prvem delu sem se osredotočil na podatke o številu ljudi z boleznimi v Sloveniji in po Evropi. Prvi graf predstavlja bolezni, ki so razdeljene po ICD-10-CM lestvici, po Sloveniji od leta 2011 do 2019. Opazimo, da prevladujeta dve skupini; bolezni cirkulacijskega sistema označeno z **Bolz** in maligne neoplazme označeno z **Mal**. Najmanj bolezni je v povezavi z nosečnostjo, porodom in puerperijem. 
 
 ```{r graf1, echo=FALSE, fig.align='center', fig.height = 7}
 graf1
 ```
 
-Razmerje med številom bolezni posameznih skupin lahko lažje razberemo na naslednjem grafu, ki predstavlja delitev v letu 2016. Nekatere izmed skupin, katerih število ljudi z boleznijo, je zelo malo, so povzeti skupaj pod imenom **Drugo**.
+Razmerje med številom bolezni posameznih skupin lahko lažje razberemo na naslednjem grafu, ki predstavlja delitev v letu 2016. Nekatere izmed skupin, katerih število ljudi z boleznijo je zelo majhno, so povzeti skupaj pod imenom **Drugo**.
 
 ```{r graf10, echo=FALSE, fig.align='center', fig.height = 7}
 graf10
 ```
 
 
-Tretji graf predstavlja isto delitev bolezni po državah v letu 2016. Pričakovano imajo države z več prebivalstva tudi več ljudi z določenimi boleznimi. Ugotovitve glede števila ljudi po skupinah bolezni so podobna kot zgoraj.
+Tretji graf predstavlja isto delitev bolezni po državah v letu 2016. Pričakovano imajo države z večjim prebivalstvom tudi več ljudi z določenimi boleznimi. Ugotovitve glede števila ljudi po skupinah bolezni so podobne kot zgoraj.
 
 ```{r graf2, echo=FALSE, fig.align='center', fig.height = 7}
 graf2
@@ -65,13 +65,13 @@ Iste podatke sem upodobil na še enem, rahlo drugačnem grafu.
 graf5
 ```
 
-Naslednji graf prikazuje število nesreč, zaradi katerih je potrebno v bolnici ostati več kot štiri dni. Izvzete so Nemčija, Španija, Velika Britanija, Italija in Evropska unija, saj so bili podatki ostalih držav, zaradi prevelike razlike v številu prebivalstva, nerazločni.
+Naslednji graf prikazuje število nesreč, zaradi katerih je potrebno v bolnici ostati več kot štiri dni. Izvzete so Nemčija, Španija, Velika Britanija, Italija in Evropska unija, saj so bili podatki ostalih držav zaradi prevelike razlike v številu prebivalcev nerazločni. Pri večini držav je graf konstanten, zanimiva pa je Nizozemska, saj v letu 2014 število nesreč zelo upade, nato pa počasi spet raste. Verjetno je to posledica obsežnega in dobro vzdrževanega cestnega omrežja. Prav tako so prometni znaki zelo jasni, zaradi česar so ceste na splošno varne za voznike.
 
 ```{r graf3, echo=FALSE, fig.align='center', fig.height = 7}
 graf3
 ```
 
-Na petem grafu sem upodobil podatke manjkajočih držav in Evropsko unijo. Pri večini držav je graf konstanten, zanimiva pa je Nizozemska, saj v letu 2014 število nesreč zelo upade, nato pa počasi spet raste.Verjetno je to posledica obsežnega in dobro vzdrževanega cestnega omrežja. Pravtako so prometni znaki zelo jasni, zaradi česar so ceste na splošno varne za voznike.
+Na petem grafu sem upodobil podatke manjkajočih držav in Evropske unije. 
 
 ```{r graf42, echo=FALSE, fig.align='center', fig.height = 7}
 graf42
@@ -79,33 +79,73 @@ graf42
 
 ### Zdravstvene težave in izdatki za zdravje
 
-V drugem delu analize sem se osredotočil na izdatke za zdravstvene namene in povprečna, ko se pričenjajo pojavljati hujše zdravstvene težave in bolezni. \\
-Prvi graf predstavlja mediano izdatkov za zdravje per capita po državah (kot že zgoraj omenjeno so vzeta leta 2017,2018 in 2019). Mediane so višje pri skandinavskih državah, Luksemburgu, Belgiji, Avstriji, kar se sklada z dejstvom, da je v teh državah standard življenja med višjimi.
+V drugem delu analize sem se osredotočil na izdatke za zdravstvene namene in povprečna starost, ko se pričenjajo pojavljati hujše zdravstvene težave in bolezni.
+Prvi graf predstavlja mediano izdatkov za zdravje per capita po državah (kot že zgoraj omenjeno, so vzeta leta 2017, 2018 in 2019). Mediane so višje pri skandinavskih državah, Luksemburgu, Belgiji, Avstriji, kar se sklada z dejstvom, da je v teh državah standard življenja med višjimi.
 
 ```{r graf6, echo=FALSE, fig.align='center', fig.height = 7}
 graf6
 ```
 
-Naslednji graf predstavlja povprečno starost, ko se začnejo pojavljati hujše zdravstvene težave. Zanimivo je dejstvo, da ima veliko držav z višjiim življenskim standardom, kljub temu vrednosti pod nekim povprečjem (na grafu je to 62 let). Razvidno je tudi, da Slovenija od leta 2011 do leta 2019 niti enkrat ne preseže te meje.
+Naslednji graf predstavlja povprečno starost, ko se začnejo pojavljati hujše zdravstvene težave. Zanimivo je dejstvo, da ima veliko držav z višjiim življenskim standardom kljub temu vrednosti pod nekim povprečjem (na grafu je to 62 let). Razvidno je tudi, da Slovenija od leta 2011 do leta 2019 niti enkrat ne preseže te meje.
 
 ```{r graf7, echo=FALSE, fig.align='center', fig.height = 7}
 graf7
 ```
 
-Tretji graf predstavlja razmerje med izdatki za zdravje in skupnim številom ljudi z boleznimi po državah in letih. Večji kot je koeficient večji naj bi bili izdatki za zdravje povprečnega posameznika.
+Tretji graf predstavlja razmerje med izdatki za zdravje in skupnim številom ljudi z boleznimi po državah in letih. Večji kot je koeficient, večji naj bi bili izdatki za zdravje povprečnega posameznika.
 Izstopajo spet nekatere skandinavkse države in Luksemburg. V zgornji polovici držav pa je tudi Slovenija.
 
 ```{r graf12, echo=FALSE, fig.align='center', fig.height = 7}
 graf12
 ```
 
+  
+```{r}
+narisi.graf = function(drzava, leta) {
+  ddd = nesrece.prebivalstvo2 %>% dplyr::filter(obmocje == drzava) %>% pivot_longer(c(5,6,7), names_to = 'type', values_to =  "value")
+dddd = ggplot(data = ddd, mapping = aes(x = type, y = value, fill = type)) +
+  geom_bar(width = 1, stat = 'identity') +
+  xlab('') + ylab('') + ggtitle("") 
+  dddd + scale_fill_brewer(palette="PrGN")
+}
+```
+```{r echo=FALSE}
+titlePanel("Povprečno leto pojava hujših zdravstvenih težav")
+column(3,
+    inputPanel(
+    radioButtons(
+      "drzava",
+      label = "Izberi državo:",
+      choices = c(
+        "SI",
+        "IT",
+        "ES",
+        "DE",
+        "BE",
+        "GB"
+      ),
+      selected = "SI"
+    )
+))
+column(9,
+  renderPlot({
+      narisi.graf(input$drzava)
+  })
+)
+```
+
+Zgoraj so predstavljena povprečna leta, pri katerih se začnejo pojavljati hujše zdravstvene težave, in sicer povprečje moških, žensk in pa skupaj. Podatki so za leto 2019, izbrane države pa so Slovenija, Italija, Španija, Nemčija, Belgija in Velika Britanija. Opazimo lahko, da je pri vsaki državi vrednost pri ženskah nekoliko večja, vendar ni velikega odstopanja. Lahko razberemo tudi veliko razliko med vrednostmi (približno 5 let) med Španijo in Italijo v primerjavi z drugimi državami. 
+
+
+
 ### Zemljevid razmerij med ljudmi z boleznijo in številom prebivalstva
 
-V zadnjem delu analize se uporabil podatke o skupnem številu ljudi z boleznimi in številom prebivalstva, ter izračunal njuno razmerje. Podatki so iz leta 2016. Temnejša barva predstavlja večjo vrednost koeficenta oziroma več ljudi z boleznimi glede na število prebivalcev. Severni del Evrope ima ponovno svetlejšo barvo, južni pa temnejšo.
+V zadnjem delu analize se uporabil podatke o skupnem številu ljudi z boleznimi in številom prebivalstva ter izračunal njuno razmerje. Podatki so iz leta 2016. Temnejša barva predstavlja večjo vrednost koeficenta oziroma več ljudi z boleznimi glede na število prebivalcev. Severni del Evrope ima ponovno svetlejšo barvo, južni pa temnejšo.
 
 ```{r graf13, echo=FALSE, fig.align='center', fig.height = 7}
 graf13
 ```
+
 
 
 ***
@@ -115,7 +155,7 @@ graf13
 source("/Users/ianlampic/Desktop/APPR-2021-22/analiza/analiza.r", encoding="UTF-8")
 ```
 
-Pri napredni analizi sem se odločil raziskati podobnost med državami v številu ljudi z boleznijo, razdeljeno po skupinah bolezni. Pravtako s hiarhičnim razvrščanjem kot tudi z metodo k-ti voditeljev pridemo do rezultata, da je optimalno število skupin 2.
+Pri napredni analizi sem se odločil raziskati podobnost med državami v številu ljudi z boleznijo, razdeljeno po skupinah bolezni. Prav tako s hiarhičnim razvrščanjem kot tudi z metodo k-tih voditeljev pridemo do rezultata, da je optimalno število skupin 2.
 
 ```{r ana1, echo=FALSE, fig.align='center'}
 ana1
@@ -143,7 +183,7 @@ V naslednjem delu sem preveril povezanost med številom ljudi z boleznijo in izd
 ana5
 ```
 
-Na koncu se poskusil napovedati povprečno starost pojavitve hujših zdravstvenih težav v Sloveniji. Zanimivo je to, da so napovedane vrednosti vse enake. Razlog je verjetno v tem, da je premalo podatkov in ni možno razbrati vzorca. Verjetno zato tudi vzame povprečno vrednost prejšnjih let.
+Na koncu se poskusil napovedati povprečno starost pojava hujših zdravstvenih težav v Sloveniji. Zanimivo je to, da so napovedane vrednosti vse enake. Razlog je verjetno v tem, da je premalo podatkov in ni možno razbrati vzorca. Verjetno zato tudi vzame povprečno vrednost prejšnjih let.
 
 ```{r ana7, echo=FALSE, fig.align='center'}
 ana7

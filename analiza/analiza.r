@@ -387,7 +387,7 @@ reg.pred = Predictor$new(
 )
 
 ana6 = FeatureImp$new(reg.pred, , loss = "mse")
-plot(ana6)
+
 ###############################################################################################
 slo <- zadnja.n %>% filter(obmocje == "Slovenia")  %>% filter(spol %in% c("Skupaj"))  %>% filter(vzrok %in% c("Mal"))
 slo <- slo[,-c(1,6,5,9,10,11,12,13,14)]
@@ -435,3 +435,4 @@ nap <- ggplot(CACs2) + geom_point(aes(x = leto, y = pojav.zdr.tezav.skupaj, colo
   xlab('Leto') + ylab('Povprečna starost pojavitve hujših bolezni')
 ana7 <- nap
 
+class(nesrece.prebivalstvo$pojav.zdr.tezav.skupaj) <- "double"
