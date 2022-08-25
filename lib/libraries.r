@@ -23,5 +23,5 @@ library(sf)
 options(gsubfn.engine="R")
 
 # Uvozimo funkcije za pobiranje in uvoz zemljevida.
-source("/Users/ianlampic/Desktop/APPR-2021-22/lib/uvozi.zemljevid.r", encoding="UTF-8")
+source("lib/uvozi.zemljevid.r", encoding="UTF-8")
 

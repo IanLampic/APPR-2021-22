@@ -361,23 +361,21 @@ nesss <- unlist(podatki.ucni$stevilo.nesrec)
 podatki.ucni$stevilo.nesrec <-  as.numeric(gsub(",", "", nesss))
 podatki.ucni <- podatki.ucni[-c(1,3,4,11,13,16,22,30,20),]
 g <- ggplot(podatki.ucni, aes(x=potrosnja, y=ljudje.z.boleznijo.skupno)) + geom_point()
-ana5 <- g + geom_smooth(method="lm", fullrange=TRUE) + xlim(2000,6500)
+ana5 <- g + geom_smooth(method="lm", fullrange=TRUE) + xlim(2000,6500) + xlab("Potrošnja") + ylab("Skupno število ljudi z boleznijo")
+
 ############################################################################
-# V modelu linearne regresije danim s formulo potrosnja ~ ljudje.z.boleznijo.skupno.x + stevilo.nesrec + stevilo.prebivalcev.x 
-# želimo analizirati pomembnost napovednih spremeljivk. 
-# Katera napovedna spremenljivka ima največjo moč? ->stevilo prebivalcev in ljudje.z.boleznijo
-# (Pomagaš si lahko s kodo s predavanj.) 
 
 library(iml)
 library (tidyverse)
 
 X = podatki.ucni %>% dplyr::select(ljudje.z.boleznijo.skupno,stevilo.prebivalcev.x, stevilo.nesrec)
+model <- lm(data = podatki.ucni, formula =  potrosnja ~ ljudje.z.boleznijo.skupno + stevilo.nesrec + stevilo.prebivalcev.x)
 podatki.ucni = podatki.ucni[c(-3,-8,-9,-15,-20,-22),]
 X = X[c(-3,-8,-9,-15,-20,-22),]
-model <- lm(data = podatki.ucni, formula =  potrosnja ~ ljudje.z.boleznijo.skupno + stevilo.nesrec + stevilo.prebivalcev.x)
+
 
 pfun = function(model, newdata) {
-  predict (model, newdata = newdata)
+  predict(model, data = newdata)
 }
 
 reg.pred = Predictor$new(
@@ -386,15 +384,17 @@ reg.pred = Predictor$new(
   predict.fun = pfun
 )
 
-ana6 = FeatureImp$new(reg.pred, , loss = "mse")
+# na koncu uporabimo funkcijo FeatureImp$new
+reg.moci = FeatureImp$new(reg.pred, loss = "mse")
 
+grafmoci <- plot(reg.moci)
 ###############################################################################################
 slo <- zadnja.n %>% filter(obmocje == "Slovenia")  %>% filter(spol %in% c("Skupaj"))  %>% filter(vzrok %in% c("Mal"))
 slo <- slo[,-c(1,6,5,9,10,11,12,13,14)]
 ness <- unlist(slo$stevilo.nesrec)
 slo$stevilo.nesrec <-  as.numeric(gsub(",", "", ness))
 slo[, c(2,4)] <- sapply(slo[, c(2,4)], as.numeric)
-class(slo$"pojav.zdr.tezav.skupaj") = "double"
+class(slo$"pojav.zdr.težav.skupaj") = "double"
 #slo <- slo[-c(1:4),]
 
 
@@ -402,7 +402,7 @@ CAC <- slo[,4]
 CACs <- slo[,c(1,4)]
 #CACs %>% ggplot() +
 #  geom_line(
-#    mapping = aes(x = leto, y = pojav.zdr.tezav.skupaj),
+#    mapping = aes(x = leto, y = pojav.zdr.težav.skupaj),
 #    color = "navyblue"
 #  )
 library(ranger)
@@ -416,7 +416,7 @@ naredi.df <- function(x){data.frame(CAC = x,
                                     CAC4 = Lag(x, 4)
 )
 }
-df <- naredi.df(CAC$pojav.zdr.tezav.skupaj)
+df <- naredi.df(CAC$pojav.zdr.težav.skupaj)
 model.bi = ranger(CAC ~ CAC1 + CAC2 + CAC3 + CAC4, data=df %>% drop_na())
 n <- nrow(df)
 for (i in 1:5){
@@ -430,9 +430,9 @@ CACs2 <- CACs
 CACs2[c(10,11,12,13,14),2] = napovedi
 CACs2[c(10,11,12,13,14),1] = c(2020, 2021, 2022, 2023, 2024)
 
-nap <- ggplot(CACs2) + geom_point(aes(x = leto, y = pojav.zdr.tezav.skupaj, colour = leto > 2019)) +
+nap <- ggplot(CACs2) + geom_point(aes(x = leto, y = pojav.zdr.težav.skupaj, colour = leto > 2019)) +
   scale_colour_manual(name = 'Napovedi', values = setNames(c('red','navyblue'),c(T, F))) +
-  xlab('Leto') + ylab('Povprečna starost pojavitve hujših bolezni')
+  xlab('Leto') + ylab('Povprečna starost pojava hujših bolezni')
 ana7 <- nap
 
-class(nesrece.prebivalstvo$pojav.zdr.tezav.skupaj) <- "double"
+class(nesrece.prebivalstvo$pojav.zdr.težav.skupaj) <- "double"

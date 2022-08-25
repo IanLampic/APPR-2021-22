@@ -4,15 +4,32 @@
 #Primerjava v Slo v letu 2011 in 2019, skupno
   Slo.skupaj.dve <- Skupaj[Skupaj$obmocje %in% c("SI"), ] %>% filter(spol %in% c("Skupaj"))
 
-  graf1 <- ggplot(data.frame(Slo.skupaj.dve)) +  aes(x = vzrok, y = ljudje.z.boleznijo, fill = leto) + geom_bar(stat="identity") + xlab("Bolezni") + ylab("stevilo") +
-                   ggtitle("Bolezni po Sloveniji od 2011 do 2019")
-  
-  
+  graf1 <- ggplot(data.frame(Slo.skupaj.dve)) +  aes(x = leto, y = ljudje.z.boleznijo, color = vzrok) + geom_line() + xlab("") + ylab("Število bolezni") +
+                   ggtitle("Število bolezni po Sloveniji od 2011 do 2019") + scale_x_continuous(breaks= c(2011,2012,2013,2014,2015,2016,2017,2018,2019)) + scale_color_discrete(name = 'Bolezni')
+
 #Razporeditev stevila ljudi glede na bolezen v letu 2016
   brezEU <- Skupaj[!(Skupaj$obmocje == "EU"),]
+  
+  #brezEU$vzrok[brezEU$vzrok =="Bolc"] <- "Bolezni cirkulacijskega sistema"        
+  #brezEU$vzrok[brezEU$vzrok == "Mal"] = "MalMaligne neoplazme"
+  #brezEU$vzrok[brezEU$vzrok == "Bolp"] = "Bolezni prebavnega sistema"
+  #brezEU$vzrok[brezEU$vzrok == "Bolz"] = "Bolezni živčnega sistema in čutnih organov"
+  #brezEU$vzrok[brezEU$vzrok == "End"] = "Endokrine, prehranske in presnovne bolezni"
+  #brezEU$vzrok[brezEU$vzrok == "Bolg"] = "Bolezni genitourinarnega sistema"
+  #brezEU$vzrok[brezEU$vzrok == "Dus"] = "Duševne in vedenjske motnje"
+  #brezEU$vzrok[brezEU$vzrok == "Nekn"] = "Nekatere nalezljive in parazitske bolezni"
+  #brezEU$vzrok[brezEU$vzrok == "Bolk"] = "Bolezni kože in podkožnega tkiva"
+  #brezEU$vzrok[brezEU$vzrok == "Bolm"] = "Bolezni mišično-skeletnega sistema in vezivnega tkiva"
+  #brezEU$vzrok[brezEU$vzrok == "Neks"] = "Določena stanja, ki izvirajo iz perinatalnega obdobja"
+  #brezEU$vzrok[brezEU$vzrok == "Nem"] = "Nemaligne neoplazme"
+  #brezEU$vzrok[brezEU$vzrok == "Nos"] = "Nosečnost, porod in puerperij"
+  #brezEU$vzrok[brezEU$vzrok == "Pri"] = "Prirojene malformacije, deformacije in kromosomske nepravilnosti"
+  #brezEU$vzrok[brezEU$vzrok == "Sim"] = "Drugi simptomi"
+  #brezEU$vzrok[brezEU$vzrok == "Bold"] = "Bolezni dihalnega sistema"
+  
 
   graf2 <- ggplot(
-  data = (brezEU %>% filter(spol %in% c("Skupaj")) %>% filter(leto %in% c(2016))) %>%
+  data = (brezEU %>% filter(spol %in% c("Skupaj")) %>% filter(leto %in% c(2017))) %>% filter(obmocje %in% c("DE", "FR", "IT", "ES", "GB", "PL")) %>% filter(vzrok %in% c("Bolc", "Bolp", "Bold", "Bolz", "Dus", "Mal", "Sim")) %>%
     dplyr::group_by(obmocje)
   ,
   mapping = aes(
@@ -22,10 +39,11 @@
   )
   ) +
   geom_bar(stat = "identity") +
-  facet_wrap(~ obmocje, ncol = 5) +
-  labs(x = "bolezni", y = "stevilo bolezni") +
-  theme(legend.position = "bottom", axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
-  ggtitle("Razporeditev stevila ljudi glede na bolezen v letu 2016")
+  facet_wrap(~ obmocje, ncol = 3) +
+  labs(x = "", y = "Število bolezni") +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1), legend.position = "None") +
+  ggtitle("")
+
 
 #Graf stevila nesrec brez Evropske unije, Nemčije, Italije, Španije, VB, Francije   (da se bolj nazorno vidi)
 
@@ -39,10 +57,10 @@
   ) + 
   geom_line() + 
   facet_wrap(facets = vars(obmocje)) +
-  xlab("leto") + 
-  ylab("stevilo.nesrec") + 
-  ggtitle("Stevilo nesrec, zaradi katerih so bili v bolnici vec kot 4 dni") +
-  theme(legend.position = "bottom", axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+  xlab("") + 
+  ylab("") + 
+  ggtitle("Število nesreč, zaradi katerih so bili v bolnici vec kot 4 dni") +
+  theme(legend.position = "bottom", axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + scale_x_continuous(breaks= c(2011,2012,2013,2014,2015,2016,2017,2018,2019)) + scale_color_discrete(name = "")
 
   #in pa skupaj na enem grafu (zaniv padec Nizozemske)
   graf32 <- ggplot(aes(x=leto, y=stevilo.nesrec, color=obmocje), data = nesrece.prebivalstvo[!(nesrece.prebivalstvo$obmocje == "EU" | nesrece.prebivalstvo$obmocje == "DE" | nesrece.prebivalstvo$obmocje == "GB" | nesrece.prebivalstvo$obmocje == "ES" |  nesrece.prebivalstvo$obmocje == "FR" | nesrece.prebivalstvo$obmocje == "IT") ,] ) + geom_line() + xlab("leto") + ylab("stevilo.nesrec") + ggtitle("stevilo.nesrec.v.drzavah.po.letih")
@@ -65,19 +83,20 @@
     theme(legend.position = "bottom", axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
 
   #se skupaj
-  graf42 <- ggplot(aes(x=leto, y=stevilo.nesrec, color=obmocje), data = nesrece.prebivalstvo %>% filter(obmocje %in% c("EU", "FR", "IT", "GB", "ES", "DE"))) + geom_line() + xlab("leto") + ylab("stevilo.nesrec") + ggtitle("stevilo.nesrec.v.drzavah.po.letih")
+  graf42 <- ggplot(aes(x=leto, y=stevilo.nesrec, color=obmocje), data = nesrece.prebivalstvo %>% filter(obmocje %in% c("EU", "FR", "IT", "GB", "ES", "DE"))) + geom_line() + xlab("") + ylab("") + ggtitle("Število nesreč v državah od leta 2011 do 2019") + scale_x_continuous(breaks= c(2011,2012,2013,2014,2015,2016,2017,2018,2019)) + scale_color_discrete(name = "")
+
 
 #Stevilo ljudi z boleznijo po drzavah
   
-  pospos <- (Skupaj[!(Skupaj$obmocje == "EU" | Skupaj$obmocje == "DE" | Skupaj$obmocje == "GB" | Skupaj$obmocje == "ES" |  Skupaj$obmocje == "FR" | Skupaj$obmocje == "IT") ,])
+  pospos <- (vsota.s[!(vsota.s$obmocje == "European Union - 28 countries (2013-2020)" | vsota.s$obmocje == "DE" | vsota.s$obmocje == "GB" | vsota.s$obmocje == "ES" |  vsota.s$obmocje == "FR" | vsota.s$obmocje == "IT") ,]) %>% filter(spol %in% c("Skupaj"))
   graf5 <- pospos %>%
     ggplot(
-      mapping = aes(x = vzrok, y = ljudje.z.boleznijo, color = obmocje)
+      mapping = aes(x = leto, y = ljudje.z.boleznijo.skupno, color = obmocje)
     ) +
     geom_point(position = position_jitter(width = 0.25)
-    ) +
-    ggtitle("Stevilo ljudi z boleznijo po drzavah")
- 
+    ) + xlab('') + ylab('') +
+    ggtitle("Skupno število ljudi z boleznijo po državah")  + scale_x_continuous(breaks= c(2011,2012,2013,2014,2015,2016,2017,2018,2019))
+
 #Mediana izdatkov za zdravje per capita po drzavah
   zat <- Skupaj %>% filter(leto %in% c(2017,2018,2019)) %>% filter(spol %in% c("Skupaj"))
   s <- unlist(zat$potrosnja)
@@ -88,31 +107,30 @@
     ggplot(
       mapping = aes(x = obmocje, y = potrosnja)
     ) +
-    geom_boxplot() +
-    ggtitle("Mediana izdatkov za zdravje per capita po drzavah")
+    geom_boxplot() + xlab("") + ylab("Izdatki per capita") +
+    ggtitle("Mediana izdatkov za zdravje per capita po državah")
 
 #V katerem letu starosti se v povprecju pojavijo zdravstvene tezave
   nesrece.prebivalstvo$leto2 <- as.character(nesrece.prebivalstvo$leto)
-  nesrece.prebivalstvo$pojav.zdr.tezav.skupaj <- type.convert(nesrece.prebivalstvo$pojav.zdr.tezav.skupaj, na.strings = ":", as.is = 0)
-  class(nesrece.prebivalstvo$pojav.zdr.tezav.skupaj) <- "Double"
-  
+  nesrece.prebivalstvo$pojav.zdr.težav.skupaj <- type.convert(nesrece.prebivalstvo$pojav.zdr.težav.skupaj, na.strings = ":", as.is = 0)
+  class(nesrece.prebivalstvo$pojav.zdr.težav.skupaj) <- "Double"
   
   graf7 <- ggplot(
-    data = nesrece.prebivalstvo %>%
+    data = nesrece.prebivalstvo %>% filter(obmocje %in% c("DE", "FR", "IT", "ES", "GB", "PL", "SI", "AT")) %>%
       dplyr::group_by(obmocje)
     ,
     mapping = aes(
       x = leto2,
-      y = pojav.zdr.tezav.skupaj,
-      fill = (pojav.zdr.tezav.skupaj > 62)
+      y = pojav.zdr.težav.skupaj,
+      fill = (pojav.zdr.težav.skupaj > 60.5)
     )
   ) +
     geom_bar(stat = "identity") +
     facet_wrap(~ obmocje, ncol = 4) +
-    labs(x = "leto", y = "pojav zdravstvenih tezav") +
+    labs(x = "", y = "Povprečna starost pojava hujših zdravstvenih težav") +
     theme(legend.position = "bottom", axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + 
-    ggtitle("V katerem letu starosti se v povprecju pojavijo zdravstvene tezave")
-  
+    ggtitle("Povprečno leto starosti, ko se pojavijo hujše zdravstvene težave")
+
 #graf stevila nesrec glede na stevilo prebivalstva
   
   vsota <- Skupaj
@@ -149,18 +167,33 @@
   #Nemcija ma kr dobro, Bulgariji se veca, Estoniji ful pade, Veliki Britaniji zelo pade
 
 #tortni diagram bolnih ljudi glede na vzroke bolezni
-
- Skupaj$bolezni.glede.na.preb <- Skupaj$ljudje.z.boleznijo.skupno / Skupaj$stevilo.prebivalcev
+                                      
+  
+ Skupaj$bolezni.glede.na.preb <- Skupaj$ljudje.z.boleznijo / Skupaj$ljudje.z.boleznijo.skupno
  Skupaj$bolezni.glede.na.preb <- as.double(Skupaj$bolezni.glede.na.preb)
  vec1 = Skupaj %>% filter(obmocje %in% c("SI")) %>% filter(leto %in% c(2016)) %>% filter(spol %in% c("Skupaj"))
  vec2 = Skupaj$vzrok[1:16]
- vec1$bolezni.glede.na.preb <- vec1$bolezni.glede.na.preb * 10000
+ vec1 %>%
+   arrange(desc(ljudje.z.boleznijo)) %>%
+   mutate(prop = percent(ljudje.z.boleznijo / (ljudje.z.boleznijo.skupno))) -> vec1
  
- drugo <- sum(vec1$bolezni.glede.na.preb[3],vec1$bolezni.glede.na.preb[10], vec1$bolezni.glede.na.preb[16], vec1$bolezni.glede.na.preb[15], vec1$bolezni.glede.na.preb[14], vec1$bolezni.glede.na.preb[13])
+ drugo <- sum(vec1$bolezni.glede.na.preb[16],vec1$bolezni.glede.na.preb[15], vec1$bolezni.glede.na.preb[14], vec1$bolezni.glede.na.preb[13], vec1$bolezni.glede.na.preb[12], vec1$bolezni.glede.na.preb[11], vec1$bolezni.glede.na.preb[10])
  vec1$bolezni.glede.na.preb[3] <- drugo
  vec1$vzrok[3] <- "Drugo"
- vec1 <- vec1[-c(10,16,14,13,15),]   
-
+ vec1 <- vec1[-c(10,11,12,13,14,15,16),]   
+ 
+ vec1$vzrok[vec1$vzrok =="Bolc"] <- "Bolezni cirkulacijskega sistema"        
+ vec1$vzrok[vec1$vzrok == "Mal"] = "Maligne neoplazme"
+vec1$vzrok[vec1$vzrok == "Drugo"] = "Drugo"
+vec1$vzrok[vec1$vzrok == "Bolp"] = "Bolezni prebavnega sistema"
+vec1$vzrok[vec1$vzrok == "Bolz"] = "Bolezni živčnega sistema in čutnih organov"
+vec1$vzrok[vec1$vzrok == "End"] = "Endokrine, prehranske in presnovne bolezni"
+vec1$vzrok[vec1$vzrok == "Bolg"] = "Bolezni genitourinarnega sistema"
+vec1$vzrok[vec1$vzrok == "Dus"] = "Duševne in vedenjske motnje"
+vec1$vzrok[vec1$vzrok == "Nekn"] = "Nekatere nalezljive in parazitske bolezni"
+ 
+ library(ggrepel)
+ 
  graf10 <- ggplot(
    data = vec1,
    aes(
@@ -170,12 +203,19 @@
    )
  ) + 
    geom_bar(stat="identity", width=1) +
-   scale_fill_manual("legend", values = c("Bolc" = "darkolivegreen1", "Bold" = "darkolivegreen3", "Bolg" = "darkolivegreen4", "Bolm" = "darkslategrey", "Bolp" =  "gold", "Bolz" = "gold4", "Drugo" = "dimgrey", "End" = "blueviolet", "Nekn" = "darkslategray1", "Dus" = "darkblue", "Mal" = "darkmagenta")) + 
-   coord_polar("y", start = 0) + 
-   ggtitle("Delitev bolnih ljudi glede na bolezni v Sloveniji leta 2016")
+   #scale_color_manual(values = c("Bolc" = "darkolivegreen1", "Bold" = "darkolivegreen3", "Bolg" = "darkolivegreen4", "Bolm" = "darkslategrey", "Bolp" =  "gold", "Bolz" = "gold4", "Drugo" = "dimgrey", "End" = "blueviolet", "Nekn" = "darkslategray1", "Dus" = "darkblue", "Mal" = "darkmagenta")) +
+   
+   coord_polar("y", start = 0) + xlab("") + ylab("") + 
+   geom_text(aes(x=1.6, label=paste0(round(bolezni.glede.na.preb*100), "%")),
+             position = position_stack(vjust=0.5)) +
+   ggtitle("Delitev števila ljudi glede na bolezni v Sloveniji leta 2016") + 
+   theme_void() + scale_fill_discrete('Bolezni')
+                                                                                   
+   
+
 
 #razmerje med stevilom postelj in ljudmi z boleznijo
-
+#values = c("Bolc" = "darkolivegreen1", "Bold" = "darkolivegreen3", "Bolg" = "darkolivegreen4", "Bolm" = "darkslategrey", "Bolp" =  "gold", "Bolz" = "gold4", "Drugo" = "dimgrey", "End" = "blueviolet", "Nekn" = "darkslategray1", "Dus" = "darkblue", "Mal" = "darkmagenta")
   novaa <- Skupaj2[ , c("obmocje", "leto", "ljudje.z.boleznijo.skupno","stevilo.postelj")] 
   novaa = novaa[seq(1, nrow(novaa), 16), ]
   novaa[novaa == 0] <- NA
@@ -195,8 +235,11 @@
   potrosnja.bolezni = na.omit(potrosnja.bolezni)
   potrosnja.bolezni$razmerje.med.potrosnjo.in.bolnimi.ljudmi <- potrosnja.bolezni$potrosnja / potrosnja.bolezni$ljudje.z.boleznijo.skupno
   
+  novagraf12 <- potrosnja.bolezni 
+  novagraf12<- novagraf12[!(novagraf12$obmocje == "Iceland" | novagraf12$obmocje == "Luxembourg"),]
+  
   graf12 <- ggplot(
-    data = (potrosnja.bolezni) %>%
+    data = (novagraf12) %>% 
       dplyr::group_by(obmocje),
     mapping = aes(
       x=leto, 
@@ -204,13 +247,31 @@
       fill = obmocje)
   ) + 
     geom_bar(stat = "identity") + 
-    geom_line() +
     facet_wrap(facets = vars(obmocje)) +
-    xlab("leto") + 
-    ylab("razmerje") + 
+    xlab("") + 
+    ylab("Razmerje") + 
     ggtitle("Razmerje med izdatki za zdravstvo in bolnimi ljudmi") +
-    theme(legend.position = "bottom", axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+    theme(legend.position = "None", axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + scale_fill_discrete(name = "")
   #Islandija in Luksemburg imata zelo dobro razmerje, torej, prebivalstvo veliko izdatkov nameni zdravju, torej lahko bolj ucinkovito zdravijo bolezni, odraza se boljsi standard zivljenja teh dveh drzav v povprecju z drugimi
+
+
+graf122 <- ggplot(
+  data = (potrosnja.bolezni) %>% filter(obmocje %in% c("Iceland", "Luxembourg")) %>%
+    dplyr::group_by(obmocje),
+  mapping = aes(
+    x=leto, 
+    y=razmerje.med.potrosnjo.in.bolnimi.ljudmi, 
+    fill = obmocje)
+) + 
+  geom_bar(stat = "identity") + 
+  facet_wrap(facets = vars(obmocje)) +
+  xlab("") + 
+  ylab("Razmerje") + 
+  ggtitle("Razmerje med izdatki za zdravstvo in bolnimi ljudmi") +
+  theme(legend.position = "None", axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + scale_fill_discrete(name = "")
+
+
+#Islandija in Luksemburg imata zelo dobro razmerje, torej, prebivalstvo veliko izdatkov nameni zdravju, torej lahko bolj ucinkovito zdravijo bolezni, odraza se boljsi standard zivljenja teh dveh drzav v povprecju z drugimi
 
   
 #Mapping  
@@ -250,6 +311,6 @@
       axis.text = element_blank(),
       axis.title = element_blank()
     ) +
-    scale_fill_gradient(low="white", high="blue") + ggtitle('Razmerje med vsoto ljudi z boleznijo in stevilom prebivalstva') + labs(fill = "")
+    scale_fill_gradient(low="white", high="blue") + ggtitle('Razmerje med vsoto ljudi z boleznijo in številom prebivalstva') + labs(fill = "")
 
-class(nesrece.prebivalstvo$pojav.zdr.tezav.skupaj) <- "double"
+class(nesrece.prebivalstvo$pojav.zdr.težav.skupaj) <- "double"

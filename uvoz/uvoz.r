@@ -2,7 +2,7 @@
 sl <- locale("sl", decimal_mark=",", grouping_mark=".")
 
 #Vzroki
-Vzroki <- read_csv("/Users/ianlampic/Desktop/APPR-2021-22/podatki/Vzroki/podatki3.csv", na=",", locale=locale(encoding="Windows-1250"), 
+Vzroki <- read_csv("podatki/Vzroki/podatki3.csv", na=",", locale=locale(encoding="Windows-1250"), 
   col_types = cols(.default = col_guess(), 
   UNIT = col_skip(), 
   RESID = col_skip(),
@@ -40,7 +40,7 @@ Vzroki$vzrok[Vzroki$vzrok == "Congenital malformations, deformations and chromos
 Vzroki$vzrok[Vzroki$vzrok == "Symptoms, signs and abnormal clinical and laboratory findings, not elsewhere classified (R00-R99)"] <- "Sim"
 
 #Prebivalstvo
-Prebivalstvo <- read_csv("/Users/ianlampic/Desktop/APPR-2021-22/podatki/Populacijan/populacija.csv", na=" ", locale=locale(encoding="Windows-1250"),
+Prebivalstvo <- read_csv("podatki/Populacijan/populacija.csv", na=" ", locale=locale(encoding="Windows-1250"),
                          col_types = cols(.default = col_guess(),
                                           FlagandFootnotes = col_skip()))
 
@@ -121,7 +121,7 @@ tab <- unlist(tabela$potrosnja)
 tabela$potrosnja <-  as.numeric(gsub(",", "", tab))
 
 #Postelje
-Postelje.v.bolnisnicah <- read_tsv("/Users/ianlampic/Desktop/APPR-2021-22/podatki/Postelje_v_bolnisnicah/postelje.tsv", na=",", locale=locale(encoding="Windows-1250"))
+Postelje.v.bolnisnicah <- read_tsv("podatki/Postelje_v_bolnisnicah/postelje.tsv", na=",", locale=locale(encoding="Windows-1250"))
 Postelje.v.bolnisnicah <- Postelje.v.bolnisnicah  %>% relocate(obmocje = GEOE)
 Postelje.v.bolnisnicah <- pivot_longer(Postelje.v.bolnisnicah, !obmocje, names_to = "leto", values_to = "stevilo.postelj")
 
@@ -222,7 +222,7 @@ Skupaj$stevilo.prebivalcev <-  as.numeric(gsub(",", "", pr))
 Koncna <- Skupaj %>% filter(spol %in% c("Skupaj"))
 ################################################################################################################################################################
 
-Nesrece.v.sluzbah <- read_tsv("/Users/ianlampic/Desktop/APPR-2021-22/podatki/Nesrece/nesrece.tsv", na=",", locale=locale(encoding="Windows-1250"))
+Nesrece.v.sluzbah <- read_tsv("podatki/Nesrece/nesrece.tsv", na=",", locale=locale(encoding="Windows-1250"))
 Nesrece.v.sluzbah <- Nesrece.v.sluzbah  %>% relocate(obmocje = GEOE)
 Nesrece.v.sluzbah$"2013" <- as.character(Nesrece.v.sluzbah$"2013") 
 Nesrece.v.sluzbah <- pivot_longer(Nesrece.v.sluzbah, !obmocje, names_to = "leto", values_to = "stevilo.nesrec")
@@ -249,7 +249,7 @@ nesrece.prebivalstvo$stevilo.nesrec <- gsub("e","",as.character(nesrece.prebival
 nesrece.prebivalstvo$stevilo.nesrec <- gsub("b","",as.character(nesrece.prebivalstvo$stevilo.nesrec))
 nesrece.prebivalstvo$stevilo.nesrec <- gsub("p","",as.character(nesrece.prebivalstvo$stevilo.nesrec))
 
-Zdrava <- read_csv("/Users/ianlampic/Desktop/APPR-2021-22/podatki/Zdrava_leta/podatki2.csv", na=",", locale=locale(encoding="Windows-1250"),
+Zdrava <- read_csv("podatki/Zdrava_leta/podatki2.csv", na=",", locale=locale(encoding="Windows-1250"),
                    col_types = cols(.default = col_guess(), 
                                     UNIT = col_skip(), 
                                     FlagandFootnotes = col_skip(),
@@ -267,7 +267,7 @@ Zdrava.m <- subset(Zdrava.m, select = -c(spol) )
 names(Zdrava.m)[names(Zdrava.m) == "Value"] <- "pojav.zdr.tezav.pri.m"
 Zdrava.s <- Zdrava  %>% filter(grepl("Total", spol)) 
 Zdrava.s <- subset(Zdrava.s, select = -c(spol) )
-names(Zdrava.s)[names(Zdrava.s) == "Value"] <- "pojav.zdr.tezav.skupaj"
+names(Zdrava.s)[names(Zdrava.s) == "Value"] <- "pojav.zdr.težav.skupaj"
 
 nesrece.prebivalstvo <- left_join(nesrece.prebivalstvo, Zdrava.z, by=c("obmocje","leto"))
 nesrece.prebivalstvo <- left_join(nesrece.prebivalstvo, Zdrava.m, by=c("obmocje","leto"))
@@ -312,7 +312,6 @@ nesrece.prebivalstvo$stevilo.nesrec <-  as.numeric(gsub(",", "", nes))
 
 class(nesrece.prebivalstvo$pojav.zdr.tezav.pri.m) <- "double"
 class(nesrece.prebivalstvo$pojav.zdr.tezav.pri.z) <- "double"
-class(nesrece.prebivalstvo$pojav.zdr.tezav.skupaj) <- "double"
+class(nesrece.prebivalstvo$pojav.zdr.težav.skupaj) <- "double"
 nesrece.prebivalstvo2 <- janitor::clean_names(nesrece.prebivalstvo)
-
 
